@@ -23,7 +23,7 @@ export default function Sidebar() {
             <button
               key={item.label}
               className={`w-full flex items-center space-x-3 px-4 py-3 cursor-pointer rounded-2xl text-left transition-colors ${
-                item.active ? "bg-brand-blue text-gray-700 font-medium  " : "text-gray-600 hover:bg-gray-50"
+                item.active ? "bg-brand-blue text-gray-700 text-brand-navy font-bold  " : "text-gray-600  font-medium hover:bg-gray-50"
               }`}
             >
               <item.icon className="w-5 h-5" />

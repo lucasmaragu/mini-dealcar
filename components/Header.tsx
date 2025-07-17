@@ -13,9 +13,9 @@ export default function Header() {
                 <div className="py-1 cursor-pointer">
                 <Bell />
                 </div>
-                <button className="flex items-center gap-2 px-3 py-1 rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors cursor-pointer">
-                    <LogOut size={18} />
-                    <span className="font-medium">Logout</span>
+                <button className="flex items-center gap-2 px-3 py-1 rounded-md bg-red-700 text-white hover:bg-red-700 transition-colors cursor-pointer">
+                    <LogOut size={18}/>
+                    <span className="font-bold">Logout</span>
                 </button>
             </div>
         </div>
