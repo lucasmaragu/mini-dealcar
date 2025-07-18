@@ -4,6 +4,7 @@ import { useState, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { ArrowLeft, Save, X, Upload, Eye, EyeOff, Check, AlertCircle, Info, Car, Euro, Calendar, Gauge, Hash, Tag, Globe, ImageIcon } from 'lucide-react'
 import { Badge } from "@/components/ui/badge"
+import { useCars } from "@/hooks/useCars"
 
 const statusOptions = [
   { value: "En preparación", label: "En preparación", color: "bg-blue-100 text-blue-800" },
@@ -45,6 +46,7 @@ interface FormData {
 
 export default function AddVehiclePage() {
   const router = useRouter()
+  const { addCar } = useCars()
   const fileInputRef = useRef<HTMLInputElement>(null)
   
   const [currentStep, setCurrentStep] = useState(1)
@@ -148,14 +150,15 @@ export default function AddVehiclePage() {
     setIsSubmitting(true)
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      console.log("Saving vehicle:", formData)
+      // Guardar el vehículo usando el hook
+      await addCar(formData)
       
-      // Show success and redirect
-      router.push("/cars?success=vehicle-added")
+      // Mostrar éxito y redirigir
+      alert("Vehículo añadido correctamente!")
+      router.push("/cars")
     } catch (error) {
       console.error("Error saving vehicle:", error)
+      alert("Error al guardar el vehículo. Por favor, inténtalo de nuevo.")
     } finally {
       setIsSubmitting(false)
     }

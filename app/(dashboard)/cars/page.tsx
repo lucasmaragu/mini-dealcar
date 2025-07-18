@@ -1,12 +1,12 @@
 "use client"
 
 import SearchInput from "@/components/SearchInput"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Edit, Filter, ChevronDown } from "lucide-react"
-import { cars } from '@/lib/data'
 import SimpleDropdown from "@/components/SimpleDropdown"
 import { Badge, getStatusVariant, getEtiqVariant } from "@/components/ui/badge"
+import { useCars } from "@/hooks/useCars"
 
 
 const statusOptions = ["Todos", "En preparación", "Disponibles", "Reservados", "Vendidos"]
@@ -15,10 +15,16 @@ const etiqOptions = ["Todas", "0", "ECO", "B", "C"]
 
 export default function CarPage() {
   const router = useRouter()
+  const { cars, loading } = useCars()
   const [filtered, setFiltered] = useState(cars)
   const [statusFilter, setStatusFilter] = useState("Todos")
   const [brandFilter, setBrandFilter] = useState("Todas")
   const [etiqFilter, setEtiqFilter] = useState("Todas")
+
+  // Actualizar filtered cuando cars cambie
+  useEffect(() => {
+    setFiltered(cars)
+  }, [cars])
 
   const handleSearch = (query: string) => {
     applyFilters(query, statusFilter, brandFilter, etiqFilter)
@@ -66,6 +72,17 @@ export default function CarPage() {
   const handleEtiqFilter = (etiq: string) => {
     setEtiqFilter(etiq)
     applyFilters("", statusFilter, brandFilter, etiq)
+  }
+
+  if (loading) {
+    return (
+      <div className="p-6 bg-brand-light min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-navy mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando vehículos...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
