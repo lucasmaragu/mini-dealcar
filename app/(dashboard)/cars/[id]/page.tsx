@@ -39,22 +39,20 @@ export default function CarDetailsPage() {
   const params = useParams()
   const { getCarById, loading: carsLoading } = useCars()
   const [car, setCar] = useState<CarType | null>(null)
-  const [loading, setLoading] = useState(true)
   const [selectedImage, setSelectedImage] = useState(0)
   const [activeTab, setActiveTab] = useState("overview")
   const [isImageModalOpen, setIsImageModalOpen] = useState(false)
   const [isFavorite, setIsFavorite] = useState(false)
 
+  // Solo mostrar loading si los datos de cars están cargando o si no hemos encontrado el coche aún
+  const loading = carsLoading || (!car && !carsLoading)
+
   useEffect(() => {
-    const fetchCar = async () => {
+    const fetchCar = () => {
       if (carsLoading) return
       
-      setLoading(true)
-      // Simular carga de API
-      await new Promise((resolve) => setTimeout(resolve, 500))
       const carData = getCarById(parseInt(params.id as string))
       setCar(carData || null)
-      setLoading(false)
     }
 
     if (params.id && !carsLoading) {

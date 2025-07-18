@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, Save, X, Upload, Eye, EyeOff, Check, AlertCircle, Info, Car, Euro, Calendar, Gauge, Hash, Tag, Globe, ImageIcon } from 'lucide-react'
+import { ArrowLeft, Save, X, Upload, Eye, EyeOff, Check, AlertCircle, Info, Car, Euro, Calendar, Gauge, Hash, Tag, Globe, ImageIcon, Settings, FileText, Building, Plus, Minus, Star } from 'lucide-react'
 import { Badge } from "@/components/ui/badge"
 import { useCars } from "@/hooks/useCars"
 
@@ -14,6 +14,10 @@ const statusOptions = [
 ]
 
 const brandOptions = ["Audi", "BMW", "Ford", "Tesla", "Toyota", "Mercedes", "Volkswagen", "Seat", "Renault"]
+
+const fuelOptions = ["Gasolina", "Diésel", "Híbrido", "Eléctrico", "Gas", "Flex"]
+
+const transmissionOptions = ["Manual", "Automático", "CVT", "Semi-automático"]
 
 const etiqOptions = [
   { value: "0", label: "0 - Cero emisiones", color: "bg-blue-100 text-blue-800" },
@@ -33,15 +37,37 @@ const portalOptions = [
 interface FormData {
   vehicle: string
   brand: string
+  model: string
   year: string
   price: string
+  originalPrice: string
   kms: string
   plate: string
   status: string
   etiq: string
   days: string
+  color: string
+  fuel: string
+  transmission: string
+  doors: string
+  seats: string
+  power: string
+  consumption: string
+  emissions: string
+  description: string
+  features: string[]
+  location: string
+  dealer: string
+  history: string
+  maintenance: string
+  portalUrls: {
+    cochesNet: string
+    autocasion: string
+    motor: string
+    milanuncios: string
+  }
   portals: Record<string, string>
-  image: string
+  images: string[]
 }
 
 export default function AddVehiclePage() {
@@ -53,26 +79,52 @@ export default function AddVehiclePage() {
   const [formData, setFormData] = useState<FormData>({
     vehicle: "",
     brand: "",
+    model: "",
     year: "",
     price: "",
+    originalPrice: "",
     kms: "",
     plate: "",
     status: "En preparación",
     etiq: "0",
     days: "",
+    color: "",
+    fuel: "",
+    transmission: "",
+    doors: "4",
+    seats: "5",
+    power: "",
+    consumption: "",
+    emissions: "",
+    description: "",
+    features: [],
+    location: "",
+    dealer: "",
+    history: "",
+    maintenance: "",
+    portalUrls: {
+      cochesNet: "",
+      autocasion: "",
+      motor: "",
+      milanuncios: ""
+    },
     portals: {},
-    image: ""
+    images: [""]
   })
   
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [showPreview, setShowPreview] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [newFeature, setNewFeature] = useState("")
 
   const steps = [
     { id: 1, title: "Información Básica", icon: Car },
-    { id: 2, title: "Estado y Clasificación", icon: Tag },
-    { id: 3, title: "Portales de Venta", icon: Globe },
-    { id: 4, title: "Imagen y Revisión", icon: ImageIcon }
+    { id: 2, title: "Especificaciones Técnicas", icon: Settings },
+    { id: 3, title: "Estado y Detalles", icon: Tag },
+    { id: 4, title: "Descripción y Características", icon: FileText },
+    { id: 5, title: "Portales de Venta", icon: Globe },
+    { id: 6, title: "Concesionario y Ubicación", icon: Building },
+    { id: 7, title: "Imágenes y Revisión", icon: ImageIcon }
   ]
 
   const handleInputChange = (field: string, value: string) => {
@@ -80,6 +132,29 @@ export default function AddVehiclePage() {
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: "" }))
     }
+  }
+
+  const updatePortalUrl = (portal: keyof FormData['portalUrls'], value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      portalUrls: { ...prev.portalUrls, [portal]: value }
+    }))
+  }
+
+  const handleFeatureAdd = (feature: string) => {
+    if (feature.trim() && !formData.features.includes(feature.trim())) {
+      setFormData(prev => ({
+        ...prev,
+        features: [...prev.features, feature.trim()]
+      }))
+    }
+  }
+
+  const handleFeatureRemove = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      features: prev.features.filter((_, i) => i !== index)
+    }))
   }
 
   const handlePortalToggle = (portal: string) => {
@@ -125,13 +200,28 @@ export default function AddVehiclePage() {
       }
     }
     
+    if (step === 2) {
+      if (!formData.fuel.trim()) newErrors.fuel = "El tipo de combustible es obligatorio"
+      if (!formData.transmission.trim()) newErrors.transmission = "La transmisión es obligatoria"
+      if (!formData.color.trim()) newErrors.color = "El color es obligatorio"
+    }
+
+    if (step === 4) {
+      if (!formData.description.trim()) newErrors.description = "La descripción es obligatoria"
+    }
+
+    if (step === 6) {
+      if (!formData.dealer.trim()) newErrors.dealer = "El nombre del concesionario es obligatorio"
+      if (!formData.location.trim()) newErrors.location = "La ubicación es obligatoria"
+    }
+    
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
   const nextStep = () => {
     if (validateStep(currentStep)) {
-      setCurrentStep(prev => Math.min(prev + 1, 4))
+      setCurrentStep(prev => Math.min(prev + 1, 7))
     }
   }
 
@@ -142,16 +232,54 @@ export default function AddVehiclePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!validateStep(1)) {
-      setCurrentStep(1)
-      return
+    // Validar que todos los pasos obligatorios estén completos
+    if (!validateStep(1) || !validateStep(2) || !validateStep(4) || !validateStep(6)) {
+      // Ir al primer paso con errores
+      for (let step = 1; step <= 7; step++) {
+        if (!validateStep(step)) {
+          setCurrentStep(step)
+          return
+        }
+      }
     }
 
     setIsSubmitting(true)
     
     try {
+      // Crear el objeto del vehículo con la nueva estructura
+      const newCar = {
+        id: Date.now().toString(),
+        vehicle: formData.vehicle,
+        brand: formData.brand,
+        model: formData.model,
+        year: parseInt(formData.year),
+        price: parseInt(formData.price),
+        originalPrice: formData.originalPrice ? parseInt(formData.originalPrice) : null,
+        kms: parseInt(formData.kms),
+        plate: formData.plate,
+        status: formData.status,
+        etiq: formData.etiq,
+        days: formData.days ? parseInt(formData.days) : null,
+        color: formData.color,
+        fuel: formData.fuel,
+        transmission: formData.transmission,
+        doors: parseInt(formData.doors),
+        seats: parseInt(formData.seats),
+        power: formData.power,
+        consumption: formData.consumption,
+        emissions: formData.emissions,
+        description: formData.description,
+        features: formData.features,
+        images: formData.images.filter(img => img.trim() !== ''),
+        portalUrls: formData.portalUrls,
+        location: formData.location,
+        dealer: formData.dealer,
+        history: formData.history,
+        maintenance: formData.maintenance
+      }
+      
       // Guardar el vehículo usando el hook
-      await addCar(formData)
+      await addCar(newCar)
       
       // Mostrar éxito y redirigir
       alert("Vehículo añadido correctamente!")
@@ -329,6 +457,21 @@ export default function AddVehiclePage() {
                   )}
                 </div>
 
+                {/* Model */}
+                <div>
+                  <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-3">
+                    <Car className="w-4 h-4" />
+                    <span>Modelo</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.model}
+                    onChange={(e) => handleInputChange("model", e.target.value)}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
+                    placeholder="Ej: A4, X3, Focus..."
+                  />
+                </div>
+
                 {/* Year */}
                 <div>
                   <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-3">
@@ -360,7 +503,7 @@ export default function AddVehiclePage() {
                 <div>
                   <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-3">
                     <Euro className="w-4 h-4" />
-                    <span>Precio (€) *</span>
+                    <span>Precio Actual (€) *</span>
                   </label>
                   <input
                     type="number"
@@ -380,6 +523,23 @@ export default function AddVehiclePage() {
                       <span className="text-sm">{errors.price}</span>
                     </div>
                   )}
+                </div>
+
+                {/* Original Price */}
+                <div>
+                  <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-3">
+                    <Euro className="w-4 h-4" />
+                    <span>Precio Original (€)</span>
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.originalPrice}
+                    onChange={(e) => handleInputChange("originalPrice", e.target.value)}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
+                    placeholder="30000 (opcional)"
+                    min="0"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Si el vehículo ha tenido una rebaja</p>
                 </div>
 
                 {/* Kilometers */}
@@ -436,8 +596,190 @@ export default function AddVehiclePage() {
             </div>
           )}
 
-          {/* Step 2: Status and Classification */}
+          {/* Step 2: Technical Specifications */}
           {currentStep === 2 && (
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+              <div className="mb-8">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="w-10 h-10 bg-brand-navy rounded-lg flex items-center justify-center">
+                    <Settings className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900">Especificaciones Técnicas</h2>
+                    <p className="text-sm text-gray-600">Detalles técnicos del vehículo</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Color */}
+                <div>
+                  <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-3">
+                    <Tag className="w-4 h-4" />
+                    <span>Color *</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.color}
+                    onChange={(e) => handleInputChange("color", e.target.value)}
+                    className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-0 transition-colors ${
+                      errors.color 
+                        ? "border-red-300 focus:border-red-500" 
+                        : "border-gray-200 focus:border-brand-navy"
+                    }`}
+                    placeholder="Ej: Gris Nardo, Negro Zafiro..."
+                  />
+                  {errors.color && (
+                    <div className="flex items-center space-x-2 mt-2 text-red-600">
+                      <AlertCircle className="w-4 h-4" />
+                      <span className="text-sm">{errors.color}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Fuel */}
+                <div>
+                  <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-3">
+                    <Settings className="w-4 h-4" />
+                    <span>Combustible *</span>
+                  </label>
+                  <select
+                    value={formData.fuel}
+                    onChange={(e) => handleInputChange("fuel", e.target.value)}
+                    className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-0 transition-colors ${
+                      errors.fuel 
+                        ? "border-red-300 focus:border-red-500" 
+                        : "border-gray-200 focus:border-brand-navy"
+                    }`}
+                  >
+                    <option value="">Selecciona combustible</option>
+                    {fuelOptions.map(fuel => (
+                      <option key={fuel} value={fuel}>{fuel}</option>
+                    ))}
+                  </select>
+                  {errors.fuel && (
+                    <div className="flex items-center space-x-2 mt-2 text-red-600">
+                      <AlertCircle className="w-4 h-4" />
+                      <span className="text-sm">{errors.fuel}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Transmission */}
+                <div>
+                  <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-3">
+                    <Settings className="w-4 h-4" />
+                    <span>Transmisión *</span>
+                  </label>
+                  <select
+                    value={formData.transmission}
+                    onChange={(e) => handleInputChange("transmission", e.target.value)}
+                    className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-0 transition-colors ${
+                      errors.transmission 
+                        ? "border-red-300 focus:border-red-500" 
+                        : "border-gray-200 focus:border-brand-navy"
+                    }`}
+                  >
+                    <option value="">Selecciona transmisión</option>
+                    {transmissionOptions.map(transmission => (
+                      <option key={transmission} value={transmission}>{transmission}</option>
+                    ))}
+                  </select>
+                  {errors.transmission && (
+                    <div className="flex items-center space-x-2 mt-2 text-red-600">
+                      <AlertCircle className="w-4 h-4" />
+                      <span className="text-sm">{errors.transmission}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Doors */}
+                <div>
+                  <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-3">
+                    <Car className="w-4 h-4" />
+                    <span>Puertas</span>
+                  </label>
+                  <select
+                    value={formData.doors}
+                    onChange={(e) => handleInputChange("doors", e.target.value)}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
+                  >
+                    <option value="2">2 puertas</option>
+                    <option value="3">3 puertas</option>
+                    <option value="4">4 puertas</option>
+                    <option value="5">5 puertas</option>
+                  </select>
+                </div>
+
+                {/* Seats */}
+                <div>
+                  <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-3">
+                    <Car className="w-4 h-4" />
+                    <span>Plazas</span>
+                  </label>
+                  <select
+                    value={formData.seats}
+                    onChange={(e) => handleInputChange("seats", e.target.value)}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
+                  >
+                    <option value="2">2 plazas</option>
+                    <option value="4">4 plazas</option>
+                    <option value="5">5 plazas</option>
+                    <option value="7">7 plazas</option>
+                    <option value="8">8 plazas</option>
+                  </select>
+                </div>
+
+                {/* Power */}
+                <div>
+                  <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-3">
+                    <Settings className="w-4 h-4" />
+                    <span>Potencia</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.power}
+                    onChange={(e) => handleInputChange("power", e.target.value)}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
+                    placeholder="Ej: 190 CV, 351 CV..."
+                  />
+                </div>
+
+                {/* Consumption */}
+                <div>
+                  <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-3">
+                    <Gauge className="w-4 h-4" />
+                    <span>Consumo</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.consumption}
+                    onChange={(e) => handleInputChange("consumption", e.target.value)}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
+                    placeholder="Ej: 4.8 L/100km, 14.3 kWh/100km..."
+                  />
+                </div>
+
+                {/* Emissions */}
+                <div>
+                  <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-3">
+                    <Settings className="w-4 h-4" />
+                    <span>Emisiones</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.emissions}
+                    onChange={(e) => handleInputChange("emissions", e.target.value)}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
+                    placeholder="Ej: 126 g/km CO2, 0 g/km CO2..."
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step 3: Status and Classification */}
+          {currentStep === 3 && (
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
               <div className="mb-8">
                 <div className="flex items-center space-x-3 mb-4">
@@ -521,8 +863,191 @@ export default function AddVehiclePage() {
             </div>
           )}
 
-          {/* Step 3: Sales Portals */}
-          {currentStep === 3 && (
+          {/* Step 4: Description and Features */}
+          {currentStep === 4 && (
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+              <div className="mb-8">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="w-10 h-10 bg-brand-navy rounded-lg flex items-center justify-center">
+                    <FileText className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900">Descripción y Características</h2>
+                    <p className="text-sm text-gray-600">Información detallada del vehículo</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-8">
+                {/* Description */}
+                <div>
+                  <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-3">
+                    <FileText className="w-4 h-4" />
+                    <span>Descripción del Vehículo *</span>
+                  </label>
+                  <textarea
+                    value={formData.description}
+                    onChange={(e) => handleInputChange("description", e.target.value)}
+                    className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-0 transition-colors h-32 resize-none ${
+                      errors.description 
+                        ? "border-red-300 focus:border-red-500" 
+                        : "border-gray-200 focus:border-brand-navy"
+                    }`}
+                    placeholder="Describe el estado del vehículo, historial, características especiales, etc..."
+                  />
+                  {errors.description && (
+                    <div className="flex items-center space-x-2 mt-2 text-red-600">
+                      <AlertCircle className="w-4 h-4" />
+                      <span className="text-sm">{errors.description}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Features */}
+                <div>
+                  <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-3">
+                    <Check className="w-4 h-4" />
+                    <span>Características y Equipamiento</span>
+                  </label>
+                  
+                  {/* Add Feature Input */}
+                  <div className="flex space-x-3 mb-4">
+                    <input
+                      type="text"
+                      value={newFeature}
+                      onChange={(e) => setNewFeature(e.target.value)}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault()
+                          handleFeatureAdd(newFeature)
+                          setNewFeature("")
+                        }
+                      }}
+                      className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
+                      placeholder="Ej: Sistema de navegación GPS, Asientos de cuero..."
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleFeatureAdd(newFeature)
+                        setNewFeature("")
+                      }}
+                      className="bg-brand-navy text-white px-6 py-3 rounded-xl hover:bg-brand-navy/90 transition-colors flex items-center space-x-2"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>Añadir</span>
+                    </button>
+                  </div>
+
+                  {/* Features List */}
+                  {formData.features.length > 0 && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {formData.features.map((feature, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <Check className="w-4 h-4 text-green-500" />
+                            <span className="text-gray-900">{feature}</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleFeatureRemove(index)}
+                            className="text-red-500 hover:text-red-700 p-1"
+                          >
+                            <Minus className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {formData.features.length === 0 && (
+                    <div className="text-center py-8 text-gray-500">
+                      <Info className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                      <p>No se han añadido características aún</p>
+                      <p className="text-sm">Añade elementos que destaquen del vehículo</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step 5: Portals */}
+          {currentStep === 5 && (
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+              <div className="mb-8">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="w-10 h-10 bg-brand-navy rounded-lg flex items-center justify-center">
+                    <Globe className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900">Portales de Venta</h2>
+                    <p className="text-sm text-gray-600">URLs donde se publicará el vehículo</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    URL Coches.net
+                  </label>
+                  <input
+                    type="url"
+                    placeholder="https://www.coches.net/..."
+                    value={formData.portalUrls.cochesNet}
+                    onChange={(e) => updatePortalUrl('cochesNet', e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    URL Autocasión
+                  </label>
+                  <input
+                    type="url"
+                    placeholder="https://www.autocasion.com/..."
+                    value={formData.portalUrls.autocasion}
+                    onChange={(e) => updatePortalUrl('autocasion', e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    URL Motor.es
+                  </label>
+                  <input
+                    type="url"
+                    placeholder="https://www.motor.es/..."
+                    value={formData.portalUrls.motor}
+                    onChange={(e) => updatePortalUrl('motor', e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    URL Milanuncios
+                  </label>
+                  <input
+                    type="url"
+                    placeholder="https://www.milanuncios.com/..."
+                    value={formData.portalUrls.milanuncios}
+                    onChange={(e) => updatePortalUrl('milanuncios', e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step 6: Sales Portals */}
+          {currentStep === 6 && (
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
               <div className="mb-8">
                 <div className="flex items-center space-x-3 mb-4">
@@ -616,8 +1141,126 @@ export default function AddVehiclePage() {
             </div>
           )}
 
-          {/* Step 4: Image and Review */}
-          {currentStep === 4 && (
+          {/* Step 5: Portals */}
+          {currentStep === 5 && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    URL Coches.net
+                  </label>
+                  <input
+                    type="url"
+                    placeholder="https://www.coches.net/..."
+                    value={formData.portalUrls.cochesNet}
+                    onChange={(e) => updatePortalUrl('cochesNet', e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    URL Autocasión
+                  </label>
+                  <input
+                    type="url"
+                    placeholder="https://www.autocasion.com/..."
+                    value={formData.portalUrls.autocasion}
+                    onChange={(e) => updatePortalUrl('autocasion', e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    URL Motor.es
+                  </label>
+                  <input
+                    type="url"
+                    placeholder="https://www.motor.es/..."
+                    value={formData.portalUrls.motor}
+                    onChange={(e) => updatePortalUrl('motor', e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    URL Milanuncios
+                  </label>
+                  <input
+                    type="url"
+                    placeholder="https://www.milanuncios.com/..."
+                    value={formData.portalUrls.milanuncios}
+                    onChange={(e) => updatePortalUrl('milanuncios', e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step 6: Dealer & Location */}
+          {currentStep === 6 && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Concesionario
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Nombre del concesionario"
+                    value={formData.dealer}
+                    onChange={(e) => setFormData({...formData, dealer: e.target.value})}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Ubicación
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Ciudad, País"
+                    value={formData.location}
+                    onChange={(e) => setFormData({...formData, location: e.target.value})}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Historial del Vehículo
+                  </label>
+                  <textarea
+                    placeholder="Historial, propietarios anteriores, accidentes, etc..."
+                    value={formData.history}
+                    onChange={(e) => setFormData({...formData, history: e.target.value})}
+                    rows={4}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Mantenimiento
+                  </label>
+                  <textarea
+                    placeholder="Información sobre mantenimiento, revisiones, etc..."
+                    value={formData.maintenance}
+                    onChange={(e) => setFormData({...formData, maintenance: e.target.value})}
+                    rows={3}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step 7: Images and Review */}
+          {currentStep === 7 && (
             <div className="space-y-8">
               {/* Image Upload */}
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
@@ -636,26 +1279,55 @@ export default function AddVehiclePage() {
                 <div className="space-y-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-3">
-                      URL de la imagen
+                      Imágenes del vehículo
                     </label>
-                    <input
-                      type="url"
-                      value={formData.image}
-                      onChange={(e) => handleInputChange("image", e.target.value)}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
-                      placeholder="https://ejemplo.com/imagen-vehiculo.jpg"
-                    />
+                    <div className="space-y-4">
+                      {formData.images.map((image, index) => (
+                        <div key={index} className="flex gap-2">
+                          <input
+                            type="url"
+                            value={image}
+                            onChange={(e) => {
+                              const newImages = [...formData.images];
+                              newImages[index] = e.target.value;
+                              setFormData({...formData, images: newImages});
+                            }}
+                            className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
+                            placeholder="https://ejemplo.com/imagen-vehiculo.jpg"
+                          />
+                          {formData.images.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newImages = formData.images.filter((_, i) => i !== index);
+                                setFormData({...formData, images: newImages});
+                              }}
+                              className="px-3 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                      
+                      <button
+                        type="button"
+                        onClick={() => setFormData({...formData, images: [...formData.images, '']})}
+                        className="w-full py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-600 hover:border-brand-navy hover:text-brand-navy transition-colors"
+                      >
+                        + Añadir imagen
+                      </button>
+                    </div>
                   </div>
 
-                  {formData.image && (
+                  {formData.images[0] && (
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <h3 className="font-medium text-gray-900">Vista previa</h3>
                         <button
                           type="button"
-                        
                           onClick={() => setShowPreview(!showPreview)}
-                          className="text-brand-navy"
+                          className="text-brand-navy flex items-center"
                         >
                           {showPreview ? <EyeOff className="w-4 h-4 mr-2" /> : <Eye className="w-4 h-4 mr-2" />}
                           {showPreview ? "Ocultar" : "Mostrar"}
@@ -664,14 +1336,19 @@ export default function AddVehiclePage() {
                       
                       {showPreview && (
                         <div className="border-2 border-dashed border-gray-300 rounded-xl p-4">
-                          <img
-                            src={formData.image || "/placeholder.svg"}
-                            alt="Preview"
-                            className="w-full max-w-md h-48 object-cover rounded-xl bg-gray-100 mx-auto"
-                            onError={(e) => {
-                              e.currentTarget.src = "/placeholder.svg"
-                            }}
-                          />
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {formData.images.filter(img => img).map((image, index) => (
+                              <img
+                                key={index}
+                                src={image || "/placeholder.svg"}
+                                alt={`Preview ${index + 1}`}
+                                className="w-full h-32 object-cover rounded-lg bg-gray-100"
+                                onError={(e) => {
+                                  e.currentTarget.src = "/placeholder.svg"
+                                }}
+                              />
+                            ))}
+                          </div>
                         </div>
                       )}
                     </div>
@@ -693,8 +1370,8 @@ export default function AddVehiclePage() {
                       <p className="font-semibold">{formData.vehicle || "Sin especificar"}</p>
                     </div>
                     <div>
-                      <span className="text-blue-200 text-sm">Marca</span>
-                      <p className="font-semibold">{formData.brand || "Sin especificar"}</p>
+                      <span className="text-blue-200 text-sm">Marca y Modelo</span>
+                      <p className="font-semibold">{formData.brand && formData.model ? `${formData.brand} ${formData.model}` : "Sin especificar"}</p>
                     </div>
                     <div>
                       <span className="text-blue-200 text-sm">Año</span>
@@ -705,6 +1382,10 @@ export default function AddVehiclePage() {
                       <p className="font-semibold">
                         {formData.price ? `€${Number(formData.price).toLocaleString()}` : "Sin especificar"}
                       </p>
+                    </div>
+                    <div>
+                      <span className="text-blue-200 text-sm">Combustible</span>
+                      <p className="font-semibold">{formData.fuel || "Sin especificar"}</p>
                     </div>
                   </div>
                   
@@ -724,8 +1405,12 @@ export default function AddVehiclePage() {
                       <p className="font-semibold">{formData.status}</p>
                     </div>
                     <div>
-                      <span className="text-blue-200 text-sm">Portales seleccionados</span>
-                      <p className="font-semibold">{Object.keys(formData.portals).length} portales</p>
+                      <span className="text-blue-200 text-sm">Concesionario</span>
+                      <p className="font-semibold">{formData.dealer || "Sin especificar"}</p>
+                    </div>
+                    <div>
+                      <span className="text-blue-200 text-sm">Características</span>
+                      <p className="font-semibold">{formData.features.length} características</p>
                     </div>
                   </div>
                 </div>
@@ -758,7 +1443,7 @@ export default function AddVehiclePage() {
                 Cancelar
               </button>
 
-              {currentStep < 4 ? (
+              {currentStep < 7 ? (
                 <button
                   type="button"
                   onClick={nextStep}
