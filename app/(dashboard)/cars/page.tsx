@@ -2,6 +2,7 @@
 
 import SearchInput from "@/components/SearchInput"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Edit, Filter, ChevronDown } from "lucide-react"
 import { cars } from '@/lib/data'
 import SimpleDropdown from "@/components/SimpleDropdown"
@@ -13,6 +14,7 @@ const brandOptions = ["Todas", "Audi", "BMW", "Ford", "Tesla", "Toyota"]
 const etiqOptions = ["Todas", "0", "ECO", "B", "C"]
 
 export default function CarPage() {
+  const router = useRouter()
   const [filtered, setFiltered] = useState(cars)
   const [statusFilter, setStatusFilter] = useState("Todos")
   const [brandFilter, setBrandFilter] = useState("Todas")
@@ -73,7 +75,10 @@ export default function CarPage() {
         <div className="flex items-center space-x-4">
           <SearchInput onSearch={handleSearch} />
         </div>
-        <button className="inline-flex items-center bg-brand-navy hover:bg-brand-navy/90 text-white rounded-xl px-4 py-2.5 text-sm font-medium transition-colors duration-200 shadow-sm">
+        <button 
+          onClick={() => router.push("/cars/add")}
+          className="inline-flex items-center bg-brand-navy hover:bg-brand-navy/90 text-white rounded-xl px-4 py-2.5 text-sm font-medium transition-colors duration-200 shadow-sm cursor-pointer"
+        >
           + Add Vehicle
         </button>
       </div>
@@ -247,7 +252,10 @@ export default function CarPage() {
                 <Badge variant={getStatusVariant(car.status)}>
                   {car.status}
                 </Badge>
-                <button className="inline-flex items-center border border-brand-navy text-brand-navy hover:bg-brand-navy hover:text-white rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-200 bg-transparent">
+                <button 
+                  onClick={() => router.push(`/cars/${car.id}`)}
+                  className="inline-flex items-center border border-brand-navy text-brand-navy hover:bg-brand-navy hover:text-white rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-200 cursor-pointer bg-transparent"
+                >
                   <Edit className="w-4 h-4 mr-1.5" />
                   Editar
                 </button>
