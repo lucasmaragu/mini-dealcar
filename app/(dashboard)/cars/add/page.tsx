@@ -415,6 +415,7 @@ export default function AddVehiclePage() {
         description: formData.description,
         features: formData.features,
         images: formData.images.filter(img => img.trim() !== ''),
+        image: formData.images.filter(img => img.trim() !== '')[0] || "", // Primera imagen del array como imagen principal
         portalUrls: formData.portalUrls,
         portals: Object.keys(formData.portals),
         location: formData.location,
