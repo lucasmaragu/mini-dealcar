@@ -1,3 +1,5 @@
+"use client"
+
 import SearchInput from '@/components/SearchInput'
 import { useState } from 'react'
 
