@@ -3,6 +3,7 @@
 import SearchInput from "@/components/SearchInput"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 import { Edit, Filter, ChevronDown, SquareArrowOutUpRight } from "lucide-react"
 import SimpleDropdown from "@/components/SimpleDropdown"
 import { Badge, getStatusVariant, getEtiqVariant } from "@/components/ui/badge"
@@ -196,9 +197,11 @@ export default function CarPage() {
             <div className="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-6">
               {/* Car Image with Overlay Button */}
               <div className="flex-shrink-0 relative mx-auto md:mx-0">
-                <img
+                <Image
                   src={car.image || "/placeholder.svg"}
                   alt={car.vehicle}
+                  width={192}
+                  height={128}
                   className="w-full md:w-48 h-48 md:h-32 object-cover rounded-xl bg-gray-100"
                 />
                 {/* Overlay Button */}

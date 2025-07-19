@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter, useParams } from "next/navigation"
+import Image from "next/image"
 import {
   ArrowLeft,
   Edit,
@@ -173,9 +174,11 @@ export default function CarDetailsPage() {
             {/* Image Gallery */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
               <div className="relative">
-                <img
+                <Image
                   src={car.images?.filter(img => img && img.trim() !== '')[selectedImage] || "/placeholder.svg"}
                   alt={car.vehicle}
+                  width={800}
+                  height={384}
                   className="w-full h-96 object-cover cursor-pointer"
                   onClick={() => setIsImageModalOpen(true)}
                 />
@@ -207,9 +210,11 @@ export default function CarDetailsPage() {
                         selectedImage === index ? "border-brand-navy" : "border-gray-200 hover:border-gray-300"
                       }`}
                     >
-                      <img
+                      <Image
                         src={image || "/placeholder.svg"}
                         alt={`Vista ${index + 1}`}
+                        width={80}
+                        height={64}
                         className="w-full h-full object-cover"
                       />
                     </button>
@@ -544,9 +549,11 @@ export default function CarDetailsPage() {
             >
               <X className="w-8 h-8" />
             </button>
-            <img
+            <Image
               src={car.images?.filter(img => img && img.trim() !== '')[selectedImage] || "/placeholder.svg"}
               alt={car.vehicle}
+              width={1200}
+              height={800}
               className="max-w-full max-h-full object-contain rounded-lg"
             />
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">

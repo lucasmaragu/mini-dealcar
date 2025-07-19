@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 import { ArrowLeft, Save, X, Upload, Eye, EyeOff, Check, AlertCircle, Info, Car, Euro, Calendar, Gauge, Hash, Tag, Globe, ImageIcon, Settings, FileText, Building, Plus, Minus, Star, MapPin } from 'lucide-react'
 import { Badge } from "@/components/ui/badge"
 import { useCars } from "@/hooks/useCars"
@@ -1640,10 +1641,12 @@ export default function AddVehiclePage() {
                         <div className="border-2 border-dashed border-gray-300 rounded-xl p-4">
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {formData.images.filter(img => img).map((image, index) => (
-                              <img
+                              <Image
                                 key={index}
                                 src={image || "/placeholder.svg"}
                                 alt={`Preview ${index + 1}`}
+                                width={300}
+                                height={128}
                                 className="w-full h-32 object-cover rounded-lg bg-gray-100"
                                 onError={(e) => {
                                   e.currentTarget.src = "/placeholder.svg"
@@ -1759,7 +1762,7 @@ export default function AddVehiclePage() {
                   type="button"
                   onClick={(e) => {
                     console.log("🟢 Botón Guardar presionado en paso:", currentStep)
-                    handleSubmit(e as any)
+                    handleSubmit(e as React.MouseEvent<HTMLButtonElement>)
                   }}
                   disabled={isSubmitting}
                   className="bg-green-600 hover:bg-green-700 px-8 py-2 rounded-lg text-white flex items-center transition-colors"
