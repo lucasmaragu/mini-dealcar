@@ -3,7 +3,7 @@
 import SearchInput from "@/components/SearchInput"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Edit, Filter, ChevronDown } from "lucide-react"
+import { Edit, Filter, ChevronDown, SquareArrowOutUpRight } from "lucide-react"
 import SimpleDropdown from "@/components/SimpleDropdown"
 import { Badge, getStatusVariant, getEtiqVariant } from "@/components/ui/badge"
 import { useCars } from "@/hooks/useCars"
@@ -86,7 +86,7 @@ export default function CarPage() {
   }
 
   return (
-    <div className="p-6 bg-brand-light min-h-screen">
+    <div className="p-6 lg:p-6 pt-16 lg:pt-6 bg-brand-light min-h-screen">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center space-x-4">
@@ -189,27 +189,36 @@ export default function CarPage() {
         )}
       </div>
 
-      {/* Cars List - Horizontal Cards */}
+      {/* Cars List - Responsive Cards */}
       <div className="space-y-4">
         {filtered.map((car) => (
-          <div key={car.id} className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow p-6">
-            <div className="flex items-center space-x-6">
-              {/* Car Image */}
-              <div className="flex-shrink-0">
+          <div key={car.id} className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow p-4 md:p-6 group">
+            <div className="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-6">
+              {/* Car Image with Overlay Button */}
+              <div className="flex-shrink-0 relative mx-auto md:mx-0">
                 <img
                   src={car.image || "/placeholder.svg"}
                   alt={car.vehicle}
-                  className="w-48 h-32 object-cover rounded-xl bg-gray-100"
+                  className="w-full md:w-48 h-48 md:h-32 object-cover rounded-xl bg-gray-100"
                 />
+                {/* Overlay Button */}
+                <div className="absolute inset-0 bg-black/40 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                  <button 
+                    onClick={() => router.push(`/cars/${car.id}`)}
+                    className="bg-white text-brand-navy hover:bg-brand-navy hover:text-white rounded-lg px-4 py-2 text-sm font-semibold transition-colors duration-200 transform scale-95 hover:scale-100 shadow-lg cursor-pointer"
+                  >
+                    <SquareArrowOutUpRight className="w-4 h-4 mr-2 inline" />
+                    Ver Detalles
+                  </button>
+                </div>
               </div>
 
               {/* Car Details */}
-              <div className="flex-1 grid grid-cols-4 gap-6">
-                {/* Column 1 */}
+              <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                 <div className="space-y-3">
                   <div>
                     <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Vehículo</span>
-                    <p className="text-sm font-semibold text-brand-navy mt-1">{car.vehicle}</p>
+                    <p className="text-sm font-semibold text-brand-navy mt-1 break-words">{car.vehicle}</p>
                   </div>
                   <div>
                     <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Precio</span>
@@ -229,8 +238,8 @@ export default function CarPage() {
                   </div>
                 </div>
 
-                {/* Column 3 */}
-                <div className="space-y-3">
+                {/* Column 3 - Hidden on mobile, visible on md+ */}
+                <div className="space-y-3 hidden md:block">
                   <div>
                     <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Matrícula</span>
                     <p className="text-sm font-semibold text-brand-navy mt-1">{car.plate}</p>
@@ -241,8 +250,8 @@ export default function CarPage() {
                   </div>
                 </div>
 
-                {/* Column 4 */}
-                <div className="space-y-3">
+                {/* Column 4 - Hidden on mobile, visible on md+ */}
+                <div className="space-y-3 hidden md:block">
                   <div>
                     <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">ETIQ</span>
                     <div className="mt-1">
@@ -262,20 +271,27 @@ export default function CarPage() {
                     </div>
                   </div>
                 </div>
+
+                {/* Mobile-only additional info */}
+                <div className="col-span-2 md:hidden">
+                  <div className="flex flex-wrap gap-2 items-center">
+                    <Badge variant={getStatusVariant(car.status)}>
+                      {car.status}
+                    </Badge>
+                    <Badge variant={getEtiqVariant(car.etiq)}>
+                      {car.etiq}
+                    </Badge>
+                    <span className="text-xs text-gray-500">{car.plate}</span>
+                    <span className="text-xs text-gray-500">{car.days} días</span>
+                  </div>
+                </div>
               </div>
 
-              {/* Status and Actions */}
-              <div className="flex-shrink-0 flex flex-col items-end space-y-3">
+              {/* Status Only - Desktop only */}
+              <div className="flex-shrink-0 hidden md:flex flex-col items-end">
                 <Badge variant={getStatusVariant(car.status)}>
                   {car.status}
                 </Badge>
-                <button 
-                  onClick={() => router.push(`/cars/${car.id}`)}
-                  className="inline-flex items-center border border-brand-navy text-brand-navy hover:bg-brand-navy hover:text-white rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-200 cursor-pointer bg-transparent"
-                >
-                  <Edit className="w-4 h-4 mr-1.5" />
-                  Editar
-                </button>
               </div>
             </div>
           </div>

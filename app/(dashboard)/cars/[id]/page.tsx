@@ -32,7 +32,8 @@ import {
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
-import { useCars, type Car as CarType } from "@/hooks/useCars"
+import { useCars  } from "@/hooks/useCars"
+import { Car as CarType } from "@/lib/types"
 
 export default function CarDetailsPage() {
   const router = useRouter()
@@ -128,14 +129,14 @@ export default function CarDetailsPage() {
     <div className="min-h-screen bg-gradient-to-br from-brand-light to-white">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
+        <div className="w-full   px-6 py-4">
+          <div className="flex items-center  justify-between">
+            <div className="flex items-center justify-between gap-x-30">
               <button
                 onClick={() => router.push("/cars")}
-                className="text-gray-600 hover:text-gray-900"
+                className="text-gray-600 flex hover:text-gray-900"
               >
-                <ArrowLeft className="w-5 h-5 mr-2" />
+                <ArrowLeft className="w-5 h-5 mr-2 mt-0.5" />
                 Volver
               </button>
               <div>
@@ -156,8 +157,8 @@ export default function CarDetailsPage() {
               <button  className="text-gray-500 hover:text-gray-700">
                 <Share2 className="w-5 h-5" />
               </button>
-              <button className="bg-brand-navy hover:bg-brand-navy/90">
-                <Edit className="w-4 h-4 mr-2" />
+              <button className="bg-brand-navy flex rounded-lg px-3 py-2 hover:bg-brand-navy/90">
+                <Edit className="w-4 h-4 mr-2 mt-1" />
                 Editar
               </button>
             </div>
@@ -189,8 +190,8 @@ export default function CarDetailsPage() {
                   </button>
                 </div>
                 <div className="absolute bottom-4 left-4">
-                  <Badge className="bg-black/50 text-white">
-                    <Camera className="w-3 h-3 mr-1" />
+                  <Badge className="bg-black/50 text-black">
+                    <Camera className="w-3 h-3 mr-1.5 " />
                     {selectedImage + 1} / {car.images.length}
                   </Badge>
                 </div>
@@ -438,7 +439,7 @@ export default function CarDetailsPage() {
             {/* Quick Info */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Información Rápida</h3>
-              <div className="space-y-4">
+              <div className="space-y-4 text-gray-600">
                 <div className="flex items-center space-x-3">
                   <Calendar className="w-5 h-5 text-gray-400" />
                   <div>
@@ -493,7 +494,7 @@ export default function CarDetailsPage() {
                   </div>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-2 text-gray-600">
                   <div className="flex items-center space-x-3">
                     <Phone className="w-4 h-4 text-gray-400" />
                     <span className="text-sm">{car.dealer.phone}</span>
@@ -509,7 +510,7 @@ export default function CarDetailsPage() {
             {/* Portals */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Publicado en</h3>
-              <div className="space-y-3">
+              <div className="space-y-3 text-gray-600">
                 {car.portalUrls && Object.entries(car.portalUrls).map(([portal, url]) => (
                   <a
                     key={portal}
