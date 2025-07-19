@@ -2,9 +2,11 @@
 
 import { useState, useRef } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, Save, X, Upload, Eye, EyeOff, Check, AlertCircle, Info, Car, Euro, Calendar, Gauge, Hash, Tag, Globe, ImageIcon, Settings, FileText, Building, Plus, Minus, Star } from 'lucide-react'
+import { ArrowLeft, Save, X, Upload, Eye, EyeOff, Check, AlertCircle, Info, Car, Euro, Calendar, Gauge, Hash, Tag, Globe, ImageIcon, Settings, FileText, Building, Plus, Minus, Star, MapPin } from 'lucide-react'
 import { Badge } from "@/components/ui/badge"
 import { useCars } from "@/hooks/useCars"
+import { FormData } from "@/lib/types"
+
 
 const statusOptions = [
   { value: "En preparación", label: "En preparación", color: "bg-blue-100 text-blue-800" },
@@ -34,41 +36,7 @@ const portalOptions = [
   { name: "Facebook", icon: "📘", description: "Redes sociales y marketplace" }
 ]
 
-interface FormData {
-  vehicle: string
-  brand: string
-  model: string
-  year: string
-  price: string
-  originalPrice: string
-  kms: string
-  plate: string
-  status: string
-  etiq: string
-  days: string
-  color: string
-  fuel: string
-  transmission: string
-  doors: string
-  seats: string
-  power: string
-  consumption: string
-  emissions: string
-  description: string
-  features: string[]
-  location: string
-  dealer: string
-  history: string
-  maintenance: string
-  portalUrls: {
-    cochesNet: string
-    autocasion: string
-    motor: string
-    milanuncios: string
-  }
-  portals: Record<string, string>
-  images: string[]
-}
+
 
 export default function AddVehiclePage() {
   const router = useRouter()
@@ -100,8 +68,8 @@ export default function AddVehiclePage() {
     features: [],
     location: "",
     dealer: "",
-    history: "",
-    maintenance: "",
+    history: [],
+    maintenance: [],
     portalUrls: {
       cochesNet: "",
       autocasion: "",
@@ -116,6 +84,10 @@ export default function AddVehiclePage() {
   const [showPreview, setShowPreview] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [newFeature, setNewFeature] = useState("")
+  
+  // Estados para history y maintenance
+  const [newHistoryEvent, setNewHistoryEvent] = useState({ date: "", event: "", type: "info" as "info" | "success" | "warning" | "error" })
+  const [newMaintenanceRecord, setNewMaintenanceRecord] = useState({ date: "", service: "", cost: "" })
 
   const steps = [
     { id: 1, title: "Información Básica", icon: Car },
@@ -177,6 +149,45 @@ export default function AddVehiclePage() {
     }))
   }
 
+  // Funciones para manejar history
+  const handleAddHistoryEvent = () => {
+    if (newHistoryEvent.date && newHistoryEvent.event) {
+      setFormData(prev => ({
+        ...prev,
+        history: [...prev.history, { ...newHistoryEvent }]
+      }))
+      setNewHistoryEvent({ date: "", event: "", type: "info" })
+    }
+  }
+
+  const handleRemoveHistoryEvent = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      history: prev.history.filter((_, i) => i !== index)
+    }))
+  }
+
+  // Funciones para manejar maintenance
+  const handleAddMaintenanceRecord = () => {
+    if (newMaintenanceRecord.date && newMaintenanceRecord.service && newMaintenanceRecord.cost) {
+      setFormData(prev => ({
+        ...prev,
+        maintenance: [...prev.maintenance, { 
+          ...newMaintenanceRecord, 
+          cost: parseFloat(newMaintenanceRecord.cost) 
+        }]
+      }))
+      setNewMaintenanceRecord({ date: "", service: "", cost: "" })
+    }
+  }
+
+  const handleRemoveMaintenanceRecord = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      maintenance: prev.maintenance.filter((_, i) => i !== index)
+    }))
+  }
+
   const validateStep = (step: number) => {
     const newErrors: Record<string, string> = {}
     
@@ -210,10 +221,50 @@ export default function AddVehiclePage() {
       if (!formData.description.trim()) newErrors.description = "La descripción es obligatoria"
     }
 
-    if (step === 6) {
-      if (!formData.dealer.trim()) newErrors.dealer = "El nombre del concesionario es obligatorio"
-      if (!formData.location.trim()) newErrors.location = "La ubicación es obligatoria"
+    // El step 6 no es obligatorio para avanzar, solo para el submit final
+    // if (step === 6) {
+    //   if (!formData.dealer.trim()) newErrors.dealer = "El nombre del concesionario es obligatorio"
+    //   if (!formData.location.trim()) newErrors.location = "La ubicación es obligatoria"
+    // }
+    
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  // Función separada para validar todo al final
+  const validateAllSteps = () => {
+    const newErrors: Record<string, string> = {}
+    
+    // Step 1 - Información básica
+    if (!formData.vehicle.trim()) newErrors.vehicle = "El nombre del vehículo es obligatorio"
+    if (!formData.brand.trim()) newErrors.brand = "La marca es obligatoria"
+    if (!formData.year.trim()) newErrors.year = "El año es obligatorio"
+    if (!formData.price.trim()) newErrors.price = "El precio es obligatorio"
+    if (!formData.kms.trim()) newErrors.kms = "Los kilómetros son obligatorios"
+    if (!formData.plate.trim()) newErrors.plate = "La matrícula es obligatoria"
+    
+    // Validate numeric fields
+    if (formData.year && (isNaN(Number(formData.year)) || Number(formData.year) < 1900 || Number(formData.year) > new Date().getFullYear() + 1)) {
+      newErrors.year = "Año inválido"
     }
+    if (formData.price && (isNaN(Number(formData.price)) || Number(formData.price) <= 0)) {
+      newErrors.price = "Precio inválido"
+    }
+    if (formData.kms && (isNaN(Number(formData.kms)) || Number(formData.kms) < 0)) {
+      newErrors.kms = "Kilómetros inválidos"
+    }
+
+    // Step 2 - Especificaciones técnicas
+    if (!formData.fuel.trim()) newErrors.fuel = "El tipo de combustible es obligatorio"
+    if (!formData.transmission.trim()) newErrors.transmission = "La transmisión es obligatoria"
+    if (!formData.color.trim()) newErrors.color = "El color es obligatorio"
+
+    // Step 4 - Descripción
+    if (!formData.description.trim()) newErrors.description = "La descripción es obligatoria"
+
+    // Step 6 - Concesionario (validado solo al final)
+    if (!formData.dealer.trim()) newErrors.dealer = "El nombre del concesionario es obligatorio"
+    if (!formData.location.trim()) newErrors.location = "La ubicación es obligatoria"
     
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -229,18 +280,76 @@ export default function AddVehiclePage() {
     setCurrentStep(prev => Math.max(prev - 1, 1))
   }
 
+  // Función para validar sin mutar el estado (sin setErrors)
+  const isStepValid = (step: number) => {
+    if (step === 1) {
+      return formData.vehicle.trim() !== "" && 
+             formData.brand.trim() !== "" && 
+             formData.year.trim() !== "" && 
+             formData.price.trim() !== "" && 
+             formData.kms.trim() !== "" && 
+             formData.plate.trim() !== "" &&
+             !isNaN(Number(formData.year)) && 
+             Number(formData.year) >= 1900 && 
+             Number(formData.year) <= new Date().getFullYear() + 1 &&
+             !isNaN(Number(formData.price)) && 
+             Number(formData.price) > 0 &&
+             !isNaN(Number(formData.kms)) && 
+             Number(formData.kms) >= 0
+    }
+    
+    if (step === 2) {
+      return formData.fuel.trim() !== "" && 
+             formData.transmission.trim() !== "" && 
+             formData.color.trim() !== ""
+    }
+
+    if (step === 4) {
+      return formData.description.trim() !== ""
+    }
+
+    return true
+  }
+
+  // Función para determinar si un paso es accesible
+  const isStepAccessible = (stepId: number) => {
+    // Siempre se puede ir a pasos anteriores
+    if (stepId < currentStep) return true
+    
+    // Se puede ir al paso actual
+    if (stepId === currentStep) return true
+    
+    // Solo se puede ir al siguiente paso si el actual es válido
+    if (stepId === currentStep + 1) {
+      return isStepValid(currentStep)
+    }
+    
+    return false
+  }
+
+  // Función mejorada para navegar a un paso específico
+  const navigateToStep = (stepId: number) => {
+    if (isStepAccessible(stepId)) {
+      setCurrentStep(stepId)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    // Validar que todos los pasos obligatorios estén completos
-    if (!validateStep(1) || !validateStep(2) || !validateStep(4) || !validateStep(6)) {
-      // Ir al primer paso con errores
-      for (let step = 1; step <= 7; step++) {
-        if (!validateStep(step)) {
-          setCurrentStep(step)
-          return
-        }
+    // Validar que todos los campos obligatorios estén completos
+    if (!validateAllSteps()) {
+      // Encontrar el primer paso con errores y navegar a él
+      if (errors.vehicle || errors.brand || errors.year || errors.price || errors.kms || errors.plate) {
+        setCurrentStep(1)
+      } else if (errors.fuel || errors.transmission || errors.color) {
+        setCurrentStep(2)
+      } else if (errors.description) {
+        setCurrentStep(4)
+      } else if (errors.dealer || errors.location) {
+        setCurrentStep(6)
       }
+      return
     }
 
     setIsSubmitting(true)
@@ -272,8 +381,15 @@ export default function AddVehiclePage() {
         features: formData.features,
         images: formData.images.filter(img => img.trim() !== ''),
         portalUrls: formData.portalUrls,
+        portals: Object.keys(formData.portals),
         location: formData.location,
-        dealer: formData.dealer,
+        dealer: {
+          name: formData.dealer,
+          phone: "",
+          email: "",
+          rating: 0,
+          reviews: 0
+        },
         history: formData.history,
         maintenance: formData.maintenance
       }
@@ -315,73 +431,191 @@ export default function AddVehiclePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-light to-white">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-7xl  px-6 py-4">
-          <div className="flex items-center  justify-between">
-             <button
-               
-                onClick={() => router.push("/cars")}
-                className="text-gray-600 flex hover:text-gray-900"
-              >
-                <ArrowLeft className="w-5 h-5 mr-2" />
-                Volver
-              </button>
-            <div className="flex items-center space-x-4">
-             
-              <div>
-                <h1 className="text-2xl font-bold text-brand-navy">Añadir Nuevo Vehículo</h1>
-                <p className="text-sm text-gray-600">Paso {currentStep} de {steps.length}</p>
+      {/* Enhanced Header with Better UX */}
+      <div className="bg-white border-b border-gray-200 sticky top-0 z-20 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+          <div className="flex items-center justify-between">
+            {/* Back Button */}
+            <button
+              onClick={() => router.push("/cars")}
+              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-navy focus:ring-offset-2 rounded-lg px-2 py-1"
+              aria-label="Volver a la lista de vehículos"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              <span className="hidden sm:inline">Volver</span>
+            </button>
+
+            {/* Title and Current Step Info */}
+            <div className="flex-1 text-center mx-4">
+              <h1 className="text-xl sm:text-2xl font-bold text-brand-navy">
+                Añadir Nuevo Vehículo
+              </h1>
+              <div className="flex items-center justify-center space-x-2 mt-1">
+                <span className="text-sm text-gray-600">
+                  Paso {currentStep} de {steps.length}:
+                </span>
+                <span className="text-sm font-medium text-brand-navy">
+                  {steps.find(s => s.id === currentStep)?.title}
+                </span>
               </div>
             </div>
-            
-            {/* Progress Bar */}
-            <div className="hidden md:flex items-center space-x-4">
-              <div className="w-48 bg-gray-200 rounded-full h-2">
+
+            {/* Progress Indicator */}
+            <div className="hidden lg:flex items-center space-x-3 min-w-[200px]">
+              <div className="flex-1 bg-gray-200 rounded-full h-3 relative overflow-hidden">
                 <div 
-                  className="bg-brand-navy h-2 rounded-full transition-all duration-300"
+                  className="bg-gradient-to-r from-brand-navy to-blue-600 h-3 rounded-full transition-all duration-500 ease-out"
                   style={{ width: `${getStepProgress()}%` }}
                 />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-xs font-medium text-white mix-blend-difference">
+                    {Math.round(getStepProgress())}%
+                  </span>
+                </div>
               </div>
-              <span className="text-sm font-medium text-gray-600">
+            </div>
+          </div>
+
+          {/* Mobile Progress Bar */}
+          <div className="lg:hidden mt-3">
+            <div className="flex items-center space-x-2 mb-2">
+              <span className="text-xs text-gray-500">Progreso:</span>
+              <span className="text-xs font-medium text-brand-navy">
                 {Math.round(getStepProgress())}%
               </span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div 
+                className="bg-gradient-to-r from-brand-navy to-blue-600 h-2 rounded-full transition-all duration-500"
+                style={{ width: `${getStepProgress()}%` }}
+              />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Step Navigation */}
-      <div className="bg-white border-b  border-gray-100">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <nav className="flex space-x-8 overflow-x-auto">
-            {steps.map((step) => {
-              const Icon = step.icon
-              const isActive = currentStep === step.id
-              const isCompleted = currentStep > step.id
-              
-              return (
-                <button
-                  key={step.id}
-                  onClick={() => setCurrentStep(step.id)}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all whitespace-nowrap ${
-                    isActive 
-                      ? "bg-brand-navy text-white" 
-                      : isCompleted
-                        ? "bg-green-100 text-green-800 hover:bg-green-200"
-                        : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"
-                  }`}
-                >
-                  {isCompleted ? (
-                    <Check className="w-5 h-5" />
-                  ) : (
-                    <Icon className="w-5 h-5" />
-                  )}
-                  <span className="font-medium">{step.title}</span>
-                </button>
-              )
-            })}
+      {/* Enhanced Step Navigation */}
+      <div className="bg-gradient-to-r from-gray-50 to-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex justify-center" aria-label="Pasos del formulario">
+            <ol className="flex items-center space-x-2">
+              {steps.map((step, index) => {
+                const Icon = step.icon
+                const isActive = currentStep === step.id
+                const isCompleted = currentStep > step.id
+                const isAccessible = isStepAccessible(step.id)
+                
+                return (
+                  <li key={step.id} className="flex items-center">
+                    {/* Step Button */}
+                    <button
+                      onClick={() => navigateToStep(step.id)}
+                      disabled={!isStepAccessible(step.id)}
+                      className={`group relative flex flex-col items-center px-4 py-3 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-navy min-w-[120px] ${
+                        isActive 
+                          ? "bg-brand-navy text-white shadow-lg transform scale-105" 
+                          : isCompleted
+                            ? "bg-green-50 text-green-700 hover:bg-green-100 border-2 border-green-200"
+                            : isStepAccessible(step.id)
+                              ? "bg-white text-gray-600 hover:bg-gray-50 border-2 border-gray-200"
+                              : "bg-gray-50 text-gray-400 cursor-not-allowed border-2 border-gray-100"
+                      }`}
+                      aria-current={isActive ? "step" : undefined}
+                      aria-label={`${step.title}${isCompleted ? ' - Completado' : isActive ? ' - Paso actual' : ''}`}
+                    >
+                      {/* Step Icon */}
+                      <div className={`flex items-center justify-center w-8 h-8 rounded-full mb-2 transition-colors ${
+                        isActive 
+                          ? "bg-white/20" 
+                          : isCompleted
+                            ? "bg-green-100"
+                            : "bg-gray-100"
+                      }`}>
+                        {isCompleted ? (
+                          <Check className="w-5 h-5 text-green-600" />
+                        ) : (
+                          <Icon className={`w-5 h-5 ${
+                            isActive ? "text-white" : isAccessible ? "text-gray-600" : "text-gray-400"
+                          }`} />
+                        )}
+                      </div>
+                      
+                      {/* Step Title */}
+                      <span className={`text-xs font-medium text-center leading-tight ${
+                        isActive ? "text-white" : isCompleted ? "text-green-700" : "text-gray-600"
+                      }`}>
+                        {step.title}
+                      </span>
+
+                      {/* Step Number */}
+                      <span className={`absolute -top-1 -right-1 flex items-center justify-center w-6 h-6 text-xs font-bold rounded-full border-2 ${
+                        isActive
+                          ? "bg-white text-brand-navy border-white"
+                          : isCompleted
+                            ? "bg-green-500 text-white border-green-500"
+                            : "bg-gray-200 text-gray-500 border-gray-200"
+                      }`}>
+                        {step.id}
+                      </span>
+
+                      {/* Active Step Indicator */}
+                      {isActive && (
+                        <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
+                          <div className="w-3 h-3 bg-brand-navy rotate-45 border-l-2 border-t-2 border-white"></div>
+                        </div>
+                      )}
+                    </button>
+
+                    {/* Connector Line */}
+                    {index < steps.length - 1 && (
+                      <div className={`w-8 h-1 mx-2 rounded-full transition-colors ${
+                        isCompleted ? "bg-green-300" : "bg-gray-200"
+                      }`} />
+                    )}
+                  </li>
+                )
+              })}
+            </ol>
           </nav>
+
+          {/* Mobile Navigation */}
+          <div className="md:hidden">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">
+                {steps.find(s => s.id === currentStep)?.title}
+              </h3>
+              <span className="px-3 py-1 bg-brand-navy text-white text-sm rounded-full font-medium">
+                {currentStep}/{steps.length}
+              </span>
+            </div>
+            
+            {/* Mobile Step Dots */}
+            <div className="flex items-center justify-center space-x-2">
+              {steps.map((step) => {
+                const isActive = currentStep === step.id
+                const isCompleted = currentStep > step.id
+                
+                return (
+                  <button
+                    key={step.id}
+                    onClick={() => navigateToStep(step.id)}
+                    disabled={!isStepAccessible(step.id)}
+                    className={`w-3 h-3 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-navy focus:ring-offset-2 ${
+                      isActive 
+                        ? "bg-brand-navy scale-150" 
+                        : isCompleted
+                          ? "bg-green-500"
+                          : isStepAccessible(step.id)
+                            ? "bg-blue-300 hover:bg-blue-400"
+                            : "bg-gray-300"
+                    }`}
+                    aria-label={`Ir al paso ${step.id}: ${step.title}`}
+                  />
+                )
+              })}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -975,7 +1209,7 @@ export default function AddVehiclePage() {
             </div>
           )}
 
-          {/* Step 5: Portals */}
+          {/* Step 5: Portales de Venta */}
           {currentStep === 5 && (
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
               <div className="mb-8">
@@ -1000,7 +1234,7 @@ export default function AddVehiclePage() {
                     placeholder="https://www.coches.net/..."
                     value={formData.portalUrls.cochesNet}
                     onChange={(e) => updatePortalUrl('cochesNet', e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
                   />
                 </div>
 
@@ -1013,7 +1247,7 @@ export default function AddVehiclePage() {
                     placeholder="https://www.autocasion.com/..."
                     value={formData.portalUrls.autocasion}
                     onChange={(e) => updatePortalUrl('autocasion', e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
                   />
                 </div>
 
@@ -1026,7 +1260,7 @@ export default function AddVehiclePage() {
                     placeholder="https://www.motor.es/..."
                     value={formData.portalUrls.motor}
                     onChange={(e) => updatePortalUrl('motor', e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
                   />
                 </div>
 
@@ -1039,221 +1273,226 @@ export default function AddVehiclePage() {
                     placeholder="https://www.milanuncios.com/..."
                     value={formData.portalUrls.milanuncios}
                     onChange={(e) => updatePortalUrl('milanuncios', e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
                   />
                 </div>
               </div>
             </div>
           )}
 
-          {/* Step 6: Sales Portals */}
+          {/* Step 6: Concesionario y Ubicación */}
           {currentStep === 6 && (
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
               <div className="mb-8">
                 <div className="flex items-center space-x-3 mb-4">
                   <div className="w-10 h-10 bg-brand-navy rounded-lg flex items-center justify-center">
-                    <Globe className="w-5 h-5 text-white" />
+                    <MapPin className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-semibold text-gray-900">Portales de Venta</h2>
-                    <p className="text-sm text-gray-600">Selecciona dónde quieres publicar este vehículo</p>
+                    <h2 className="text-xl font-semibold text-gray-900">Concesionario y Ubicación</h2>
+                    <p className="text-sm text-gray-600">Información del vendedor y historial del vehículo</p>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-6">
-                {portalOptions.map(portal => (
-                  <div 
-                    key={portal.name} 
-                    className={`border-2 rounded-xl p-6 transition-all ${
-                      formData.portals[portal.name] !== undefined
-                        ? "border-brand-navy bg-brand-blue/20"
-                        : "border-gray-200 hover:border-gray-300"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center space-x-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-3">
+                      <MapPin className="w-4 h-4" />
+                      <span>Concesionario</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Nombre del concesionario"
+                      value={formData.dealer}
+                      onChange={(e) => handleInputChange("dealer", e.target.value)}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-3">
+                      <MapPin className="w-4 h-4" />
+                      <span>Ubicación</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ciudad, País"
+                      value={formData.location}
+                      onChange={(e) => handleInputChange("location", e.target.value)}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-3">
+                    <FileText className="w-4 h-4" />
+                    <span>Historial del Vehículo</span>
+                  </label>
+                  
+                  {/* Add History Event */}
+                  <div className="space-y-4 mb-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      <input
+                        type="date"
+                        value={newHistoryEvent.date}
+                        onChange={(e) => setNewHistoryEvent(prev => ({...prev, date: e.target.value}))}
+                        className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Evento (ej: Primera visita)"
+                        value={newHistoryEvent.event}
+                        onChange={(e) => setNewHistoryEvent(prev => ({...prev, event: e.target.value}))}
+                        className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
+                      />
+                      <div className="flex space-x-2">
+                        <select
+                          value={newHistoryEvent.type}
+                          onChange={(e) => setNewHistoryEvent(prev => ({...prev, type: e.target.value as "info" | "success" | "warning" | "error"}))}
+                          className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
+                        >
+                          <option value="info">Info</option>
+                          <option value="success">Éxito</option>
+                          <option value="warning">Advertencia</option>
+                          <option value="error">Error</option>
+                        </select>
                         <button
                           type="button"
-                          onClick={() => handlePortalToggle(portal.name)}
-                          className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${
-                            formData.portals[portal.name] !== undefined
-                              ? "border-brand-navy bg-brand-navy"
-                              : "border-gray-300 bg-white hover:border-brand-navy"
+                          onClick={handleAddHistoryEvent}
+                          className="bg-brand-navy text-white px-6 py-3 rounded-xl hover:bg-brand-navy/90 transition-colors flex items-center space-x-2"
+                        >
+                          <Plus className="w-4 h-4" />
+                          <span>Añadir</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* History Events List */}
+                  {formData.history.length > 0 && (
+                    <div className="space-y-3">
+                      {formData.history.map((event, index) => (
+                        <div
+                          key={index}
+                          className={`flex items-center justify-between p-4 rounded-lg border-l-4 ${
+                            event.type === "success" ? "bg-green-50 border-green-500" :
+                            event.type === "warning" ? "bg-yellow-50 border-yellow-500" :
+                            event.type === "error" ? "bg-red-50 border-red-500" :
+                            "bg-blue-50 border-blue-500"
                           }`}
                         >
-                          {formData.portals[portal.name] !== undefined && (
-                            <Check className="w-4 h-4 text-white" />
-                          )}
-                        </button>
-                        
-                        <div className="flex items-center space-x-3">
-                          <span className="text-2xl">{portal.icon}</span>
-                          <div>
-                            <h3 className="font-semibold text-gray-900">{portal.name}</h3>
-                            <p className="text-sm text-gray-600">{portal.description}</p>
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-3">
+                              <span className={`px-2 py-1 text-xs font-medium rounded ${
+                                event.type === "success" ? "bg-green-100 text-green-800" :
+                                event.type === "warning" ? "bg-yellow-100 text-yellow-800" :
+                                event.type === "error" ? "bg-red-100 text-red-800" :
+                                "bg-blue-100 text-blue-800"
+                              }`}>
+                                {event.type.toUpperCase()}
+                              </span>
+                              <span className="text-gray-600 text-sm">{event.date}</span>
+                            </div>
+                            <p className="text-gray-900 mt-1">{event.event}</p>
                           </div>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveHistoryEvent(index)}
+                            className="text-red-500 hover:text-red-700 p-1"
+                          >
+                            <Minus className="w-4 h-4" />
+                          </button>
                         </div>
-                      </div>
-                      
-                      {formData.portals[portal.name] !== undefined && (
-                        <Badge className="bg-green-100 text-green-800">
-                          Seleccionado
-                        </Badge>
-                      )}
+                      ))}
                     </div>
+                  )}
 
-                    {formData.portals[portal.name] !== undefined && (
-                      <div className="mt-4 pl-10">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          URL del anuncio en {portal.name}
-                        </label>
-                        <input
-                          type="url"
-                          value={formData.portals[portal.name] || ""}
-                          onChange={(e) => handlePortalUrlChange(portal.name, e.target.value)}
-                          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
-                          placeholder={`https://${portal.name.toLowerCase().replace(/\s+/g, '')}.com/anuncio-vehiculo`}
-                        />
-                      </div>
-                    )}
+                  {formData.history.length === 0 && (
+                    <div className="text-center py-6 text-gray-500 bg-gray-50 rounded-lg">
+                      <Info className="w-6 h-6 mx-auto mb-2 opacity-50" />
+                      <p>No se han añadido eventos de historial</p>
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-3">
+                    <Settings className="w-4 h-4" />
+                    <span>Mantenimiento</span>
+                  </label>
+                  
+                  {/* Add Maintenance Record */}
+                  <div className="space-y-4 mb-4">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                      <input
+                        type="date"
+                        value={newMaintenanceRecord.date}
+                        onChange={(e) => setNewMaintenanceRecord(prev => ({...prev, date: e.target.value}))}
+                        className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Servicio (ej: Cambio de aceite)"
+                        value={newMaintenanceRecord.service}
+                        onChange={(e) => setNewMaintenanceRecord(prev => ({...prev, service: e.target.value}))}
+                        className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
+                      />
+                      <input
+                        type="number"
+                        placeholder="Coste €"
+                        value={newMaintenanceRecord.cost}
+                        onChange={(e) => setNewMaintenanceRecord(prev => ({...prev, cost: e.target.value}))}
+                        className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddMaintenanceRecord}
+                        className="bg-brand-navy text-white px-6 py-3 rounded-xl hover:bg-brand-navy/90 transition-colors flex items-center space-x-2"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>Añadir</span>
+                      </button>
+                    </div>
                   </div>
-                ))}
-              </div>
 
-              {Object.keys(formData.portals).length > 0 && (
-                <div className="mt-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
-                  <h3 className="font-semibold text-blue-900 mb-4">
-                    📊 Resumen de portales seleccionados
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {Object.entries(formData.portals).map(([portal, url]) => (
-                      <div key={portal} className="flex items-center justify-between p-3 bg-white rounded-lg">
-                        <span className="font-medium text-blue-800">{portal}</span>
-                        <span className="text-sm text-blue-600 truncate max-w-32 ml-2">
-                          {url || "URL pendiente"}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+                  {/* Maintenance Records List */}
+                  {formData.maintenance.length > 0 && (
+                    <div className="space-y-3">
+                      {formData.maintenance.map((record, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                        >
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-3">
+                              <span className="text-gray-600 text-sm">{record.date}</span>
+                              <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">
+                                €{record.cost.toFixed(2)}
+                              </span>
+                            </div>
+                            <p className="text-gray-900 mt-1">{record.service}</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveMaintenanceRecord(index)}
+                            className="text-red-500 hover:text-red-700 p-1"
+                          >
+                            <Minus className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
 
-          {/* Step 5: Portals */}
-          {currentStep === 5 && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    URL Coches.net
-                  </label>
-                  <input
-                    type="url"
-                    placeholder="https://www.coches.net/..."
-                    value={formData.portalUrls.cochesNet}
-                    onChange={(e) => updatePortalUrl('cochesNet', e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    URL Autocasión
-                  </label>
-                  <input
-                    type="url"
-                    placeholder="https://www.autocasion.com/..."
-                    value={formData.portalUrls.autocasion}
-                    onChange={(e) => updatePortalUrl('autocasion', e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    URL Motor.es
-                  </label>
-                  <input
-                    type="url"
-                    placeholder="https://www.motor.es/..."
-                    value={formData.portalUrls.motor}
-                    onChange={(e) => updatePortalUrl('motor', e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    URL Milanuncios
-                  </label>
-                  <input
-                    type="url"
-                    placeholder="https://www.milanuncios.com/..."
-                    value={formData.portalUrls.milanuncios}
-                    onChange={(e) => updatePortalUrl('milanuncios', e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Step 6: Dealer & Location */}
-          {currentStep === 6 && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Concesionario
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Nombre del concesionario"
-                    value={formData.dealer}
-                    onChange={(e) => setFormData({...formData, dealer: e.target.value})}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Ubicación
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ciudad, País"
-                    value={formData.location}
-                    onChange={(e) => setFormData({...formData, location: e.target.value})}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Historial del Vehículo
-                  </label>
-                  <textarea
-                    placeholder="Historial, propietarios anteriores, accidentes, etc..."
-                    value={formData.history}
-                    onChange={(e) => setFormData({...formData, history: e.target.value})}
-                    rows={4}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Mantenimiento
-                  </label>
-                  <textarea
-                    placeholder="Información sobre mantenimiento, revisiones, etc..."
-                    value={formData.maintenance}
-                    onChange={(e) => setFormData({...formData, maintenance: e.target.value})}
-                    rows={3}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
+                  {formData.maintenance.length === 0 && (
+                    <div className="text-center py-6 text-gray-500 bg-gray-50 rounded-lg">
+                      <Info className="w-6 h-6 mx-auto mb-2 opacity-50" />
+                      <p>No se han añadido registros de mantenimiento</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
