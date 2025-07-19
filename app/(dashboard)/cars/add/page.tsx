@@ -1,9 +1,9 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
-import { ArrowLeft, Save, X, Upload, Eye, EyeOff, Check, AlertCircle, Info, Car, Euro, Calendar, Gauge, Hash, Tag, Globe, ImageIcon, Settings, FileText, Building, Plus, Minus, Star, MapPin } from 'lucide-react'
+import { ArrowLeft, Save, X, Eye, EyeOff, Check, AlertCircle, Info, Car, Euro, Calendar, Gauge, Hash, Tag, Globe, ImageIcon, Settings, FileText, Building, Plus, Minus, MapPin } from 'lucide-react'
 import { Badge } from "@/components/ui/badge"
 import { useCars } from "@/hooks/useCars"
 import { FormData } from "@/lib/types"
@@ -29,20 +29,10 @@ const etiqOptions = [
   { value: "C", label: "C - Diésel", color: "bg-orange-100 text-orange-800" }
 ]
 
-const portalOptions = [
-  { name: "Auto1", icon: "🚗", description: "Portal profesional de vehículos" },
-  { name: "Coches.net", icon: "🔍", description: "Líder en venta de coches usados" },
-  { name: "AutoScout24", icon: "🌍", description: "Portal europeo de automóviles" },
-  { name: "Wallapop", icon: "📱", description: "Marketplace de segunda mano" },
-  { name: "Facebook", icon: "📘", description: "Redes sociales y marketplace" }
-]
-
-
 
 export default function AddVehiclePage() {
   const router = useRouter()
   const { addCar } = useCars()
-  const fileInputRef = useRef<HTMLInputElement>(null)
   
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState<FormData>({
@@ -127,26 +117,6 @@ export default function AddVehiclePage() {
     setFormData(prev => ({
       ...prev,
       features: prev.features.filter((_, i) => i !== index)
-    }))
-  }
-
-  const handlePortalToggle = (portal: string) => {
-    setFormData(prev => ({
-      ...prev,
-      portals: prev.portals[portal] 
-        ? (() => {
-            const newPortals = { ...prev.portals }
-            delete newPortals[portal]
-            return newPortals
-          })()
-        : { ...prev.portals, [portal]: "" }
-    }))
-  }
-
-  const handlePortalUrlChange = (portal: string, url: string) => {
-    setFormData(prev => ({
-      ...prev,
-      portals: { ...prev.portals, [portal]: url }
     }))
   }
 
