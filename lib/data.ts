@@ -84,12 +84,12 @@ export const cars = [
     power: "190 CV",
     consumption: "5.4 L/100km",
     emissions: "142 g/km CO2",
-    image: "https://www.km77.com/media/fotos/bmw_x3_2022_8015_1.jpg",
+    image: "https://cdn.autobild.es/sites/navi.axelspringer.es/public/bdc/dc/fotos/BMW-X3-2018-C01.jpg?tf=1200x",
     images: [
-      "https://www.km77.com/media/fotos/bmw_x3_2022_8015_1.jpg",
-      "https://www.km77.com/media/fotos/bmw_x3_2022_8015_2.jpg",
-      "https://www.km77.com/media/fotos/bmw_x3_2022_8015_3.jpg",
-      "https://www.km77.com/media/fotos/bmw_x3_2022_8015_4.jpg",
+      "https://cdn.autobild.es/sites/navi.axelspringer.es/public/bdc/dc/fotos/BMW-X3-2018-C01.jpg?tf=1200x",
+      "https://www.autopista.es/uploads/s1/57/64/98/4/article-bmw-x3-20d-suv-opiniones-prueba-consumos-5a05ab1053691.jpeg",
+      "https://images.prismic.io/carwow/fc837f39-23b3-4e06-8833-e1a96224a4bd_LHD+BMW+X3+2021+interior+5.jpg?auto=format&cs=tinysrgb&fit=clip&ixlib=rb-1.1.0&q=60&w=1125",
+      "https://www.seuwagen.com/images/r001994_19960955.jpg",
     ],
     description: "BMW X3 en perfectas condiciones, con todos los servicios al día. SUV premium con tracción integral xDrive. Ideal para familias que buscan lujo y versatilidad.",
     features: [
@@ -149,9 +149,9 @@ export const cars = [
     image: "https://img.pymecar.com/vehiculo/2/tn5_4497_240307143938_1.jpg",
     images: [
       "https://img.pymecar.com/vehiculo/2/tn5_4497_240307143938_1.jpg",
-      "https://img.pymecar.com/vehiculo/2/tn5_4497_240307143938_2.jpg",
-      "https://img.pymecar.com/vehiculo/2/tn5_4497_240307143938_3.jpg",
-      "https://img.pymecar.com/vehiculo/2/tn5_4497_240307143938_4.jpg",
+      "https://www.cochesyconcesionarios.com/media/cache/1170x780/uploads/ford/focus/3/ha/ford-focus-rs-6ed37af3a72a5417364b0c1a53ca1cc55a0b5b66.jpeg",
+      "https://cdn.dealerk.es/dealer/datafiles/vehicle/images/800/858/Cd5mn48D16EiAg0U.jpg",
+      "https://content.canalcar.es/media/cache/xl/30ee335a-4b24-4588-b5cb-573f10b95c23/1CBPZVuosE8Wai13sywjvT.jpg",
     ],
     description: "Ford Focus en buen estado general. Vehículo familiar perfecto para ciudad y carretera. Motor EcoBoost eficiente y fiable. Mantenimiento al día.",
     features: [
@@ -275,9 +275,9 @@ export const cars = [
     image: "https://scene7.toyota.eu/is/image/toyotaeurope/review-nuevo-corolla?wid=1280&fit=fit,1&ts=0&resMode=sharp2&op_usm=1.75,0.3,2,0",
     images: [
       "https://scene7.toyota.eu/is/image/toyotaeurope/review-nuevo-corolla?wid=1280&fit=fit,1&ts=0&resMode=sharp2&op_usm=1.75,0.3,2,0",
-      "https://scene7.toyota.eu/is/image/toyotaeurope/corolla-interior-1?wid=1280&fit=fit,1&ts=0&resMode=sharp2&op_usm=1.75,0.3,2,0",
-      "https://scene7.toyota.eu/is/image/toyotaeurope/corolla-rear-view?wid=1280&fit=fit,1&ts=0&resMode=sharp2&op_usm=1.75,0.3,2,0",
-      "https://scene7.toyota.eu/is/image/toyotaeurope/corolla-profile?wid=1280&fit=fit,1&ts=0&resMode=sharp2&op_usm=1.75,0.3,2,0",
+      "https://cdn.autobild.es/sites/navi.axelspringer.es/public/media/image/2019/10/toyota-corolla-hybrid.jpg?tf=3840x",
+      "https://scene7.toyota.eu/is/image/toyotaeurope/cuadro-instrumentacion-toyota-corolla?wid=1280&fit=fit,1&ts=1667470285362&resMode=sharp2&op_usm=1.75,0.3,2,0",
+      "https://static0.carbuzzimages.com/wordpress/wp-content/uploads/gallery-images/original/926000/400/926464.jpg",
     ],
     description: "Toyota Corolla Hybrid vendido recientemente. Vehículo híbrido muy eficiente, perfecto para uso urbano y viajes largos. Consumo muy bajo y gran fiabilidad Toyota.",
     features: [
@@ -336,12 +336,12 @@ export const cars = [
     power: "204 CV",
     consumption: "5.8 L/100km",
     emissions: "153 g/km CO2",
-    image: "/placeholder.svg?height=120&width=200",
+    image: "https://images.motorflash.com/filter?path=https%3A%2F%2Ffotos.estaticosmf.com%2Ffotos_anuncios%2F00%2F06%2F30%2F03%2F06%2F6%2Fx01.jpg&size=700",
     images: [
-      "/placeholder.svg?height=400&width=600",
-      "/placeholder.svg?height=400&width=600",
-      "/placeholder.svg?height=400&width=600",
-      "/placeholder.svg?height=400&width=600",
+      "https://images.motorflash.com/filter?path=https%3A%2F%2Ffotos.estaticosmf.com%2Ffotos_anuncios%2F00%2F06%2F30%2F03%2F06%2F6%2Fx01.jpg&size=700",
+      "https://d1gl66oyi6i593.cloudfront.net/wp-content/uploads/2021/06/prueba-audi-q5-sportback-40-tdi-2.jpg",
+      "https://s2.dmcdn.net/v/SkeNN1XEuT6GYDEe5/x1080",
+      "https://www.autonocion.com/wp-content/uploads/2021/06/prueba-audi-q5-2021-int1.jpg",
     ],
     description: "Audi Q5 en excelente estado. SUV premium con tracción quattro. Perfecto equilibrio entre lujo, rendimiento y practicidad. Ideal para familias exigentes.",
     features: [
