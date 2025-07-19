@@ -156,12 +156,29 @@ export function useCars() {
     return cars.find(car => car.id === id)
   }
 
+  // Función para limpiar todos los vehículos del localStorage
+  const clearUserCars = () => {
+    try {
+      // Eliminar todos los vehículos del localStorage
+      localStorage.removeItem(STORAGE_KEY)
+      
+      // Actualizar estado solo con los vehículos originales
+      setCars(carsData as Car[])
+      
+      return true
+    } catch (error) {
+      console.error("Error clearing user cars:", error)
+      throw error
+    }
+  }
+
   return {
     cars,
     loading,
     addCar,
     updateCar,
     deleteCar,
-    getCarById
+    getCarById,
+    clearUserCars
   }
 }

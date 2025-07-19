@@ -212,9 +212,9 @@ export const cars = [
     image: "https://cdn.motor1.com/images/mgl/jzjBk/s1/tesla-model-3-awd-long-range-2021-prueba.webp",
     images: [
       "https://cdn.motor1.com/images/mgl/jzjBk/s1/tesla-model-3-awd-long-range-2021-prueba.webp",
-      "https://cdn.motor1.com/images/mgl/jzjBk/s2/tesla-model-3-interior.webp",
-      "https://cdn.motor1.com/images/mgl/jzjBk/s3/tesla-model-3-rear.webp",
-      "https://cdn.motor1.com/images/mgl/jzjBk/s4/tesla-model-3-profile.webp",
+      "https://octane.rent/wp-content/uploads/2024/11/Tesla-Model-3-white-1-600x400.webp",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-tesla-model-3-long-range-rwd-112-66feb72b5731d.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-tesla-model-3-long-range-rwd-101-66feb72765eed.jpg?crop=1xw:1xh;center,top&resize=980:*",
     ],
     description: "Tesla Model 3 prácticamente nuevo. Vehículo eléctrico premium con la última tecnología de Tesla. Autonomía de 448 km WLTP. Carga rápida y conducción autónoma.",
     features: [

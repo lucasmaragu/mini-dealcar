@@ -174,14 +174,13 @@ export default function CarDetailsPage() {
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
               <div className="relative">
                 <img
-                  src={car.images[selectedImage] || "/placeholder.svg"}
+                  src={car.images?.filter(img => img && img.trim() !== '')[selectedImage] || "/placeholder.svg"}
                   alt={car.vehicle}
                   className="w-full h-96 object-cover cursor-pointer"
                   onClick={() => setIsImageModalOpen(true)}
                 />
                 <div className="absolute top-4 right-4">
                   <button
-                  
                     onClick={() => setIsImageModalOpen(true)}
                     className="bg-black/50 flex rounded-full px-2 text-white hover:bg-black/70"
                   >
@@ -191,8 +190,8 @@ export default function CarDetailsPage() {
                 </div>
                 <div className="absolute bottom-4 left-4">
                   <Badge className="bg-black/50 text-black">
-                    <Camera className="w-3 h-3 mr-1.5 " />
-                    {selectedImage + 1} / {car.images.length}
+                    <Camera className="w-3 h-3 mr-1.5" />
+                    {selectedImage + 1} / {car.images?.filter(img => img && img.trim() !== '').length || 0}
                   </Badge>
                 </div>
               </div>
@@ -200,7 +199,7 @@ export default function CarDetailsPage() {
               {/* Thumbnail Gallery */}
               <div className="p-4">
                 <div className="flex space-x-3 overflow-x-auto">
-                  {car.images.map((image: string, index: number) => (
+                  {car.images?.filter(img => img && img.trim() !== '').map((image: string, index: number) => (
                     <button
                       key={index}
                       onClick={() => setSelectedImage(index)}
@@ -546,12 +545,12 @@ export default function CarDetailsPage() {
               <X className="w-8 h-8" />
             </button>
             <img
-              src={car.images[selectedImage] || "/placeholder.svg"}
+              src={car.images?.filter(img => img && img.trim() !== '')[selectedImage] || "/placeholder.svg"}
               alt={car.vehicle}
               className="max-w-full max-h-full object-contain rounded-lg"
             />
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-              {car.images.map((_, index: number) => (
+              {car.images?.filter(img => img && img.trim() !== '').map((_, index: number) => (
                 <button
                   key={index}
                   onClick={() => setSelectedImage(index)}

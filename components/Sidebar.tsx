@@ -1,7 +1,8 @@
 "use client"
 
-import { Car, LayoutDashboard, Users, Settings, Search, Bell, ChevronDown, Edit, Plus, Menu, X } from "lucide-react"
+import { Car, LayoutDashboard, Users, Settings, Search, Bell, ChevronDown, Edit, Plus, Menu, X, Trash2 } from "lucide-react"
 import { useState } from "react"
+import { useCars } from "@/hooks/useCars"
 
 const sideBarItems = [
   { icon: LayoutDashboard, label: "Dashboard", active: false },
@@ -12,6 +13,34 @@ const sideBarItems = [
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false)
+  const { clearUserCars, cars } = useCars()
+  const [isClearing, setIsClearing] = useState(false)
+
+  // Calcular cuántos vehículos son del usuario (localStorage)
+  const userCarsCount = cars.filter(car => car.id > 6).length // Asumiendo que los primeros 6 son los originales
+
+  const handleClearUserCars = async () => {
+    if (userCarsCount === 0) {
+      alert("No hay vehículos de usuario para eliminar.")
+      return
+    }
+
+    const confirmed = confirm(`¿Estás seguro de que quieres eliminar todos los ${userCarsCount} vehículos creados por ti? Esta acción no se puede deshacer.`)
+    
+    if (confirmed) {
+      setIsClearing(true)
+      try {
+        await clearUserCars()
+        alert("Todos los vehículos de usuario han sido eliminados correctamente.")
+        setIsOpen(false) // Cerrar sidebar en móvil
+      } catch (error) {
+        alert("Error al eliminar los vehículos. Por favor, inténtalo de nuevo.")
+        console.error("Error clearing user cars:", error)
+      } finally {
+        setIsClearing(false)
+      }
+    }
+  }
 
   return (
     <>
@@ -73,6 +102,31 @@ export default function Sidebar() {
                 <span>{item.label}</span>
               </button>
             ))}
+
+            {/* Separator */}
+            <div className="border-t border-gray-200 my-4"></div>
+
+            {/* Clear User Cars Button */}
+            <button
+              onClick={handleClearUserCars}
+              disabled={isClearing || userCarsCount === 0}
+              className={`w-full flex items-center space-x-3 px-4 py-3 cursor-pointer rounded-2xl text-left transition-colors ${
+                userCarsCount === 0 
+                  ? "text-gray-400 cursor-not-allowed" 
+                  : "text-red-600 font-medium hover:bg-red-50"
+              } ${isClearing ? "opacity-50" : ""}`}
+              title={userCarsCount === 0 ? "No hay vehículos de usuario para eliminar" : `Eliminar ${userCarsCount} vehículos de usuario`}
+            >
+              <Trash2 className="w-5 h-5" />
+              <div className="flex flex-col items-start">
+                <span className="text-sm">
+                  {isClearing ? "Eliminando..." : "Limpiar mis vehículos"}
+                </span>
+                <span className="text-xs opacity-75">
+                  {userCarsCount > 0 ? `${userCarsCount} vehículos` : "Sin vehículos"}
+                </span>
+              </div>
+            </button>
           </nav>
 
           {/* Footer - Optional user info or logout */}
