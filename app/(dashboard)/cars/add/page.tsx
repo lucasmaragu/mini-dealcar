@@ -221,6 +221,11 @@ export default function AddVehiclePage() {
       if (!formData.description.trim()) newErrors.description = "La descripción es obligatoria"
     }
 
+    if (step === 6) {
+      if (!formData.dealer.trim()) newErrors.dealer = "El nombre del concesionario es obligatorio"
+      if (!formData.location.trim()) newErrors.location = "La ubicación es obligatoria"
+    }
+
     // El step 6 no es obligatorio para avanzar, solo para el submit final
     // if (step === 6) {
     //   if (!formData.dealer.trim()) newErrors.dealer = "El nombre del concesionario es obligatorio"
@@ -270,9 +275,24 @@ export default function AddVehiclePage() {
     return Object.keys(newErrors).length === 0
   }
 
+  // Función para prevenir submit accidental en inputs
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && currentStep !== 7) {
+      e.preventDefault()
+      // En lugar de submit, avanzar al siguiente paso si es válido
+      if (currentStep < 7 && validateStep(currentStep)) {
+        setCurrentStep(prev => Math.min(prev + 1, 7))
+      }
+    }
+  }
+
   const nextStep = () => {
+    console.log("🔵 nextStep ejecutado - currentStep:", currentStep)
     if (validateStep(currentStep)) {
+      console.log("✅ Validación exitosa, avanzando al paso:", currentStep + 1)
       setCurrentStep(prev => Math.min(prev + 1, 7))
+    } else {
+      console.log("❌ Validación falló para el paso:", currentStep)
     }
   }
 
@@ -308,6 +328,10 @@ export default function AddVehiclePage() {
       return formData.description.trim() !== ""
     }
 
+    if (step === 6) {
+      return formData.dealer.trim() !== "" && formData.location.trim() !== ""
+    }
+
     return true
   }
 
@@ -335,7 +359,18 @@ export default function AddVehiclePage() {
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
+    console.log("🔴 handleSubmit ejecutado - currentStep:", currentStep)
     e.preventDefault()
+    e.stopPropagation()
+    
+    // Solo permitir submit en el paso 7
+    if (currentStep !== 7) {
+      console.log(`🚫 Submit bloqueado: actualmente en paso ${currentStep}, debe estar en paso 7`)
+      alert(`Debug: Submit bloqueado en paso ${currentStep}. Debe estar en paso 7.`)
+      return false
+    }
+    
+    console.log("✅ Submit permitido en paso 7")
     
     // Validar que todos los campos obligatorios estén completos
     if (!validateAllSteps()) {
@@ -621,7 +656,7 @@ export default function AddVehiclePage() {
 
       {/* Form Content */}
       <div className="max-w-4xl text-gray-800  mx-auto px-6 py-8">
-        <form onSubmit={handleSubmit}>
+        <div className="form-container">
           {/* Step 1: Basic Information */}
           {currentStep === 1 && (
             <div className="bg-white rounded-2xl  shadow-sm border border-gray-100 p-8">
@@ -1300,29 +1335,51 @@ export default function AddVehiclePage() {
                   <div>
                     <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-3">
                       <MapPin className="w-4 h-4" />
-                      <span>Concesionario</span>
+                      <span>Concesionario *</span>
                     </label>
                     <input
                       type="text"
                       placeholder="Nombre del concesionario"
                       value={formData.dealer}
                       onChange={(e) => handleInputChange("dealer", e.target.value)}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
+                      onKeyDown={handleKeyDown}
+                      className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-0 transition-colors ${
+                        errors.dealer 
+                          ? "border-red-300 focus:border-red-500" 
+                          : "border-gray-200 focus:border-brand-navy"
+                      }`}
                     />
+                    {errors.dealer && (
+                      <div className="flex items-center space-x-2 mt-2 text-red-600">
+                        <AlertCircle className="w-4 h-4" />
+                        <span className="text-sm">{errors.dealer}</span>
+                      </div>
+                    )}
                   </div>
 
                   <div>
                     <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-3">
                       <MapPin className="w-4 h-4" />
-                      <span>Ubicación</span>
+                      <span>Ubicación *</span>
                     </label>
                     <input
                       type="text"
                       placeholder="Ciudad, País"
                       value={formData.location}
                       onChange={(e) => handleInputChange("location", e.target.value)}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
+                      onKeyDown={handleKeyDown}
+                      className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-0 transition-colors ${
+                        errors.location 
+                          ? "border-red-300 focus:border-red-500" 
+                          : "border-gray-200 focus:border-brand-navy"
+                      }`}
                     />
+                    {errors.location && (
+                      <div className="flex items-center space-x-2 mt-2 text-red-600">
+                        <AlertCircle className="w-4 h-4" />
+                        <span className="text-sm">{errors.location}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -1339,6 +1396,7 @@ export default function AddVehiclePage() {
                         type="date"
                         value={newHistoryEvent.date}
                         onChange={(e) => setNewHistoryEvent(prev => ({...prev, date: e.target.value}))}
+                        onKeyDown={handleKeyDown}
                         className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
                       />
                       <input
@@ -1346,6 +1404,7 @@ export default function AddVehiclePage() {
                         placeholder="Evento (ej: Primera visita)"
                         value={newHistoryEvent.event}
                         onChange={(e) => setNewHistoryEvent(prev => ({...prev, event: e.target.value}))}
+                        onKeyDown={handleKeyDown}
                         className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
                       />
                       <div className="flex space-x-2">
@@ -1431,6 +1490,7 @@ export default function AddVehiclePage() {
                         type="date"
                         value={newMaintenanceRecord.date}
                         onChange={(e) => setNewMaintenanceRecord(prev => ({...prev, date: e.target.value}))}
+                        onKeyDown={handleKeyDown}
                         className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
                       />
                       <input
@@ -1438,6 +1498,7 @@ export default function AddVehiclePage() {
                         placeholder="Servicio (ej: Cambio de aceite)"
                         value={newMaintenanceRecord.service}
                         onChange={(e) => setNewMaintenanceRecord(prev => ({...prev, service: e.target.value}))}
+                        onKeyDown={handleKeyDown}
                         className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
                       />
                       <input
@@ -1445,6 +1506,7 @@ export default function AddVehiclePage() {
                         placeholder="Coste €"
                         value={newMaintenanceRecord.cost}
                         onChange={(e) => setNewMaintenanceRecord(prev => ({...prev, cost: e.target.value}))}
+                        onKeyDown={handleKeyDown}
                         className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
                       />
                       <button
@@ -1693,9 +1755,13 @@ export default function AddVehiclePage() {
                 </button>
               ) : (
                 <button
-                  type="submit"
+                  type="button"
+                  onClick={(e) => {
+                    console.log("🟢 Botón Guardar presionado en paso:", currentStep)
+                    handleSubmit(e as any)
+                  }}
                   disabled={isSubmitting}
-                  className="bg-green-600 hover:bg-green-700 px-8"
+                  className="bg-green-600 hover:bg-green-700 px-8 py-2 rounded-lg text-white flex items-center transition-colors"
                 >
                   {isSubmitting ? (
                     <>
@@ -1712,7 +1778,7 @@ export default function AddVehiclePage() {
               )}
             </div>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   )
