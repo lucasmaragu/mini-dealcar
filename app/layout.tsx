@@ -23,7 +23,10 @@ export const metadata = {
     "typescript",
     "vehículos",
     "react",
-  ]};
+  ],
+icons: {
+    icon: "/favicon.ico", 
+  },};
 
 export default function RootLayout({
   children,

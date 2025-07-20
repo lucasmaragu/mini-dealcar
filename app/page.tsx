@@ -6,16 +6,7 @@ import { useRouter } from "next/navigation"
 
 export default function LandingPage() {
   const router = useRouter()
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20)
-    }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
 
   return (
     <div className="min-h-screen bg-white font-body overflow-hidden">
@@ -26,7 +17,7 @@ export default function LandingPage() {
       <header className="absolute top-0 w-full z-40 bg-transparent">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" role="navigation" aria-label="Navegación principal">
           <div className="flex items-center justify-between h-16">
-            {/* Logo */}
+         
             <div className="flex-shrink-0">
               <div className="flex items-center space-x-2 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-md p-1">
                 <div className="flex items-center space-x-2">
@@ -45,7 +36,7 @@ export default function LandingPage() {
       <main id="main-content" className="h-full flex items-center">
         {/* Hero Section */}
         <section className="relative w-full h-full flex items-center overflow-hidden" aria-labelledby="hero-heading">
-          {/* Background Pattern */}
+       
           <div className="absolute inset-0 bg-gradient-to-br from-neutral-50 via-primary-50/30 to-accent-50/20">
             <div className="absolute inset-0 opacity-30">
               <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -65,7 +56,7 @@ export default function LandingPage() {
               <div className="animate-fade-in flex flex-col justify-center text-center lg:text-left">
                 <h1
                   id="hero-heading"
-                  className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-neutral-900 leading-tight mb-4 lg:mb-6"
+                  className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold text-neutral-900 leading-tight mb-4 lg:mb-6"
                 >
                   Encuentra tu próximo{" "}
                   <span className="text-brand-navy bg-clip-text bg-gradient-to-r from-primary-600 to-accent-500">
