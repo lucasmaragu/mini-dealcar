@@ -193,16 +193,16 @@ export default function CarPage() {
       {/* Cars List - Responsive Cards */}
       <div className="space-y-4">
         {filtered.map((car) => (
-          <div key={car.id} className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow p-4 md:p-6 group">
-            <div className="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-6">
+          <div key={car.id} className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow car-card group">
+            <div className="flex flex-col md:flex-row md:items-center car-card-content">
               {/* Car Image with Overlay Button */}
-              <div className="flex-shrink-0 relative mx-auto md:mx-0">
+              <div className="flex-shrink-0 relative mx-auto md:mx-0 w-full md:w-48">
                 <Image
                   src={car.image || "/placeholder.svg"}
                   alt={car.vehicle}
                   width={192}
                   height={128}
-                  className="w-full md:w-48 h-48 md:h-32 object-cover rounded-xl bg-gray-100"
+                  className="w-full h-48 md:h-32 object-cover rounded-xl bg-gray-100"
                 />
                 {/* Overlay Button */}
                 <div className="absolute inset-0 bg-black/40 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
@@ -217,7 +217,7 @@ export default function CarPage() {
               </div>
 
               {/* Car Details */}
-              <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div className="space-y-3">
                   <div>
                     <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Vehículo</span>

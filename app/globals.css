@@ -32,3 +32,19 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
+
+/* Ensure consistent card spacing in production */
+.car-card {
+  padding: 1.5rem !important;
+  gap: 1.5rem !important;
+}
+
+.car-card-content {
+  gap: 1.5rem !important;
+}
+
+@media (min-width: 768px) {
+  .car-card-content {
+    gap: 1.5rem !important;
+  }
+}
