@@ -65,7 +65,7 @@ export default function LandingPage() {
               <div className="animate-fade-in flex flex-col justify-center text-center lg:text-left">
                 <h1
                   id="hero-heading"
-                  className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-neutral-900 leading-tight mb-4 lg:mb-6"
+                  className="font-heading text-2xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold text-neutral-900 leading-tight mb-4 lg:mb-6"
                 >
                   Encuentra tu próximo{" "}
                   <span className="text-brand-navy bg-clip-text bg-gradient-to-r from-primary-600 to-accent-500">
