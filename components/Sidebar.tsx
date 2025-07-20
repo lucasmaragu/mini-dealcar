@@ -199,7 +199,7 @@ export default function Sidebar() {
                     </p>
                     <p className="text-sm text-red-700 mt-1">
                       Una vez eliminados, no podrás recuperar estos vehículos. 
-                      Asegúrate de tener copias de seguridad si las necesitas.
+                    
                     </p>
                   </div>
                 </div>
