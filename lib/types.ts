@@ -88,3 +88,16 @@ export interface FormData {
   portals: string[]
   images: string[]
 }
+
+
+export interface Sale {
+  id: number
+  vehicleModel: string
+  clientName: string
+  salePrice: number
+  date: string
+  status: string
+  salesPerson: string
+  commission: number
+  paymentMethod: string
+}

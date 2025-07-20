@@ -1,11 +1,11 @@
 "use client"
 
-import { Car, LayoutDashboard, Users, Settings, Search, Bell, ChevronDown, Edit, Plus, Menu, X, Trash2 } from "lucide-react"
+import { Car, LayoutDashboard, Users, Settings, Search, Bell, ChevronDown, Edit, Plus, Menu, X, Trash2, TrendingUp } from "lucide-react"
 import { useState } from "react"
 import { useCars } from "@/hooks/useCars"
 
 const sideBarItems = [
-  { icon: LayoutDashboard, label: "Dashboard", active: false },
+  { icon: TrendingUp, label: "Ventas", active: false },
   { icon: Car, label: "Cars", active: true },
   { icon: Users, label: "Customers", active: false },
   { icon: Settings, label: "Settings", active: false },

@@ -379,3 +379,126 @@ export const cars = [
     ],
   },
 ]
+
+// Datos de ventas
+export const sales = [
+  {
+    id: 1,
+    vehicleModel: "BMW Serie 3 320d",
+    clientName: "María García",
+    salePrice: 35000,
+    date: "2025-07-18",
+    status: "Completada",
+    salesPerson: "Carlos López",
+    commission: 1400,
+    paymentMethod: "Financiamiento"
+  },
+  {
+    id: 2,
+    vehicleModel: "Audi A4 2.0 TDI",
+    clientName: "Juan Martínez",
+    salePrice: 42000,
+    date: "2025-07-17",
+    status: "Completada",
+    salesPerson: "Ana Rodríguez",
+    commission: 1680,
+    paymentMethod: "Contado"
+  },
+  {
+    id: 3,
+    vehicleModel: "Tesla Model 3",
+    clientName: "Pedro Sánchez",
+    salePrice: 48000,
+    date: "2025-07-16",
+    status: "En proceso",
+    salesPerson: "Luis Fernández",
+    commission: 1920,
+    paymentMethod: "Financiamiento"
+  },
+  {
+    id: 4,
+    vehicleModel: "Ford Mustang GT",
+    clientName: "Laura Jiménez",
+    salePrice: 55000,
+    date: "2025-07-15",
+    status: "Completada",
+    salesPerson: "Carlos López",
+    commission: 2200,
+    paymentMethod: "Contado"
+  },
+  {
+    id: 5,
+    vehicleModel: "Toyota Corolla Hybrid",
+    clientName: "Roberto Silva",
+    salePrice: 28000,
+    date: "2025-07-14",
+    status: "Completada",
+    salesPerson: "Ana Rodríguez",
+    commission: 1120,
+    paymentMethod: "Financiamiento"
+  },
+  {
+    id: 6,
+    vehicleModel: "Mercedes-Benz Clase C",
+    clientName: "Carmen Ruiz",
+    salePrice: 52000,
+    date: "2025-07-13",
+    status: "En revisión",
+    salesPerson: "Luis Fernández",
+    commission: 2080,
+    paymentMethod: "Contado"
+  },
+  {
+    id: 7,
+    vehicleModel: "Volkswagen Golf GTI",
+    clientName: "Miguel Torres",
+    salePrice: 38000,
+    date: "2025-07-12",
+    status: "Completada",
+    salesPerson: "Carlos López",
+    commission: 1520,
+    paymentMethod: "Financiamiento"
+  },
+  {
+    id: 8,
+    vehicleModel: "Hyundai Tucson",
+    clientName: "Elena Vargas",
+    salePrice: 32000,
+    date: "2025-07-11",
+    status: "Completada",
+    salesPerson: "Ana Rodríguez",
+    commission: 1280,
+    paymentMethod: "Contado"
+  },
+  {
+    id: 9,
+    vehicleModel: "Nissan Qashqai",
+    clientName: "Antonio López",
+    salePrice: 29500,
+    date: "2025-07-10",
+    status: "Completada",
+    salesPerson: "Luis Fernández",
+    commission: 1180,
+    paymentMethod: "Financiamiento"
+  },
+  {
+    id: 10,
+    vehicleModel: "Seat León FR",
+    clientName: "Cristina Morales",
+    salePrice: 26000,
+    date: "2025-07-09",
+    status: "En proceso",
+    salesPerson: "Carlos López",
+    commission: 1040,
+    paymentMethod: "Contado"
+  }
+]
+
+// Estadísticas de ventas calculadas
+export const salesStats = {
+  totalSales: sales.length,
+  totalRevenue: sales.reduce((sum, sale) => sum + sale.salePrice, 0),
+  avgSalePrice: Math.round(sales.reduce((sum, sale) => sum + sale.salePrice, 0) / sales.length),
+  completedSales: sales.filter(sale => sale.status === "Completada").length,
+  monthlyGrowth: 12.5
+}
