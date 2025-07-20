@@ -105,7 +105,7 @@ export interface Sale {
 export interface CarsContextType {
   cars: Car[]
   loading: boolean
-  addCar: (newCarData: any) => Car
+  addCar: (newCarData: FormData) => Car
   updateCar: (id: number, updatedData: Partial<Car>) => void
   deleteCar: (id: number) => void
   getCarById: (id: number) => Car | undefined
