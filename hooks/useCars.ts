@@ -62,8 +62,8 @@ export function useCars() {
         power: newCarData.power || "",
         consumption: newCarData.consumption || "",
         emissions: newCarData.emissions || "",
-        portals: Object.keys(newCarData.portals || {}), // Convertir objeto a array
-        portalUrls: newCarData.portals || {},
+        portals: newCarData.portals || [], // Array de nombres de portales
+        portalUrls: newCarData.portalUrls || {}, // Objeto con estructura {portal: url}
         image: newCarData.image || "",
         images: newCarData.images || [newCarData.image || ""],
         description: newCarData.description || "",
@@ -92,7 +92,7 @@ export function useCars() {
       
       // Actualizar estado
       setCars(prev => [...prev, newCar])
-      
+     console.log(newCar)
       return newCar
     } catch (error) {
       console.error("Error saving car to localStorage:", error)

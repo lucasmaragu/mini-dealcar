@@ -61,13 +61,8 @@ export default function AddVehiclePage() {
     dealer: "",
     history: [],
     maintenance: [],
-    portalUrls: {
-      cochesNet: "",
-      autocasion: "",
-      motor: "",
-      milanuncios: ""
-    },
-    portals: {},
+    portalUrls: {},
+    portals: [],
     images: [""]
   })
   
@@ -97,7 +92,7 @@ export default function AddVehiclePage() {
     }
   }
 
-  const updatePortalUrl = (portal: keyof FormData['portalUrls'], value: string) => {
+  const updatePortalUrl = (portal: string, value: string) => {
     setFormData(prev => ({
       ...prev,
       portalUrls: { ...prev.portalUrls, [portal]: value }
@@ -361,6 +356,12 @@ export default function AddVehiclePage() {
     setIsSubmitting(true)
     
     try {
+      // Filtrar portales con URLs válidas
+      const validPortalUrls = Object.fromEntries(
+        Object.entries(formData.portalUrls).filter(([key, url]) => url.trim() !== '')
+      )
+      const portals = Object.keys(validPortalUrls)
+
       // Crear el objeto del vehículo con la nueva estructura
       const newCar = {
         id: Date.now().toString(),
@@ -387,8 +388,8 @@ export default function AddVehiclePage() {
         features: formData.features,
         images: formData.images.filter(img => img.trim() !== ''),
         image: formData.images.filter(img => img.trim() !== '')[0] || "", // Primera imagen del array como imagen principal
-        portalUrls: formData.portalUrls,
-        portals: Object.keys(formData.portals),
+        portalUrls: validPortalUrls,
+        portals: portals,
         location: formData.location,
         dealer: {
           name: formData.dealer,
@@ -1239,34 +1240,21 @@ export default function AddVehiclePage() {
                   <input
                     type="url"
                     placeholder="https://www.coches.net/..."
-                    value={formData.portalUrls.cochesNet}
-                    onChange={(e) => updatePortalUrl('cochesNet', e.target.value)}
+                    value={formData.portalUrls["Coches.net"] || ""}
+                    onChange={(e) => updatePortalUrl('Coches.net', e.target.value)}
                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    URL Autocasión
+                    URL AutoScout24
                   </label>
                   <input
                     type="url"
-                    placeholder="https://www.autocasion.com/..."
-                    value={formData.portalUrls.autocasion}
-                    onChange={(e) => updatePortalUrl('autocasion', e.target.value)}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    URL Motor.es
-                  </label>
-                  <input
-                    type="url"
-                    placeholder="https://www.motor.es/..."
-                    value={formData.portalUrls.motor}
-                    onChange={(e) => updatePortalUrl('motor', e.target.value)}
+                    placeholder="https://www.autoscout24.com/..."
+                    value={formData.portalUrls["AutoScout24"] || ""}
+                    onChange={(e) => updatePortalUrl('AutoScout24', e.target.value)}
                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
                   />
                 </div>
@@ -1278,8 +1266,21 @@ export default function AddVehiclePage() {
                   <input
                     type="url"
                     placeholder="https://www.milanuncios.com/..."
-                    value={formData.portalUrls.milanuncios}
-                    onChange={(e) => updatePortalUrl('milanuncios', e.target.value)}
+                    value={formData.portalUrls["Milanuncios"] || ""}
+                    onChange={(e) => updatePortalUrl('Milanuncios', e.target.value)}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    URL Otros Portales
+                  </label>
+                  <input
+                    type="url"
+                    placeholder="https://..."
+                    value={formData.portalUrls["Otros"] || ""}
+                    onChange={(e) => updatePortalUrl('Otros', e.target.value)}
                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-brand-navy transition-colors"
                   />
                 </div>

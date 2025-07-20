@@ -84,12 +84,7 @@ export interface FormData {
     service: string
     cost: number
   }>
-  portalUrls: {
-    cochesNet: string
-    autocasion: string
-    motor: string
-    milanuncios: string
-  }
-  portals: Record<string, string>
+  portalUrls: { [key: string]: string }
+  portals: string[]
   images: string[]
 }
