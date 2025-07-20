@@ -3,12 +3,14 @@
 import { Car, LayoutDashboard, Users, Settings, Search, Bell, ChevronDown, Edit, Plus, Menu, X, Trash2, TrendingUp } from "lucide-react"
 import { useState } from "react"
 import { useCars } from "@/hooks/useCars"
+import { useRouter, usePathname } from "next/navigation"
 
+// replace the old list
 const sideBarItems = [
-  { icon: TrendingUp, label: "Ventas", active: false },
-  { icon: Car, label: "Cars", active: true },
-  { icon: Users, label: "Customers", active: false },
-  { icon: Settings, label: "Settings", active: false },
+  { icon: TrendingUp, label: "Ventas",    href: "/ventas" },
+  { icon: Car,       label: "Cars",      href: "/cars" },
+  { icon: Users,     label: "Customers", href: "/customers", disabled: true, badge: "Próximamente" },
+  { icon: Settings,  label: "Settings",  href: "/settings",  disabled: true, badge: "Próximamente" },
 ]
 
 export default function Sidebar() {
@@ -16,8 +18,10 @@ export default function Sidebar() {
   const { clearUserCars, cars } = useCars()
   const [isClearing, setIsClearing] = useState(false)
 
-  // Calcular cuántos vehículos son del usuario (localStorage)
-  const userCarsCount = cars.filter(car => car.id > 6).length // Asumiendo que los primeros 6 son los originales
+  const router = useRouter() 
+  const pathname = usePathname()
+
+  const userCarsCount = cars.filter(car => car.id > 6).length 
 
   const handleClearUserCars = async () => {
     if (userCarsCount === 0) {
@@ -32,7 +36,7 @@ export default function Sidebar() {
       try {
         await clearUserCars()
         alert("Todos los vehículos de usuario han sido eliminados correctamente.")
-        setIsOpen(false) // Cerrar sidebar en móvil
+        setIsOpen(false) 
       } catch (error) {
         alert("Error al eliminar los vehículos. Por favor, inténtalo de nuevo.")
         console.error("Error clearing user cars:", error)
@@ -48,7 +52,7 @@ export default function Sidebar() {
       <div className="lg:hidden fixed top-4 left-4 z-50">
         <button
           onClick={() => setIsOpen(true)}
-          className="p-2 bg-white rounded-lg shadow-md border border-gray-200 hover:bg-gray-50 transition-colors"
+          className="p-2 cursor-pointer bg-white rounded-lg shadow-md border border-gray-200 hover:bg-gray-50 transition-colors"
         >
           <Menu className="w-6 h-6 text-gray-600" />
         </button>
@@ -57,7 +61,7 @@ export default function Sidebar() {
       {/* Backdrop for mobile */}
       {isOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+          className="lg:hidden fixed inset-0 bg-black/50 z-40"
           onClick={() => setIsOpen(false)}
         />
       )}
@@ -82,7 +86,7 @@ export default function Sidebar() {
             {/* Close button - only visible on mobile */}
             <button
               onClick={() => setIsOpen(false)}
-              className="lg:hidden p-1 hover:bg-gray-100 rounded-md transition-colors"
+              className="lg:hidden cursor-pointer p-1 hover:bg-gray-100 rounded-md transition-colors"
             >
               <X className="w-5 h-5 text-gray-500" />
             </button>
@@ -90,18 +94,41 @@ export default function Sidebar() {
 
           {/* Navigation */}
           <nav className="px-4 space-y-2 flex-1">
-            {sideBarItems.map((item) => (
-              <button
-                key={item.label}
-                onClick={() => setIsOpen(false)} // Close menu on mobile when item is clicked
-                className={`w-full flex items-center space-x-3 px-4 py-3 cursor-pointer rounded-2xl text-left transition-colors ${
-                  item.active ? "bg-brand-blue text-gray-700 text-brand-navy font-bold" : "text-gray-600 font-medium hover:bg-gray-50"
-                }`}
-              >
-                <item.icon className="w-5 h-5" />
-                <span>{item.label}</span>
-              </button>
-            ))}
+            {sideBarItems.map((item) => {
+              const active = pathname === item.href
+              const isDisabled = Boolean(item.disabled)
+              const btnClass = `
+                w-full flex items-center cursor-pointer space-x-3 px-4 py-3 rounded-2xl text-left transition-colors
+                ${isDisabled
+                  ? "text-gray-400 cursor-not-allowed"
+                  : active
+                    ? "bg-brand-blue text-brand-navy font-bold"
+                    : "text-gray-600 font-medium hover:bg-gray-50"}
+              `
+              return (
+                <button
+                  key={item.label}
+                  onClick={() => {
+                    if (!isDisabled) {
+                      router.push(item.href)
+                      setIsOpen(false)
+                    }
+                  }}
+                  disabled={isDisabled}
+                  className={btnClass}
+                >
+                  <item.icon className="w-5 h-5" />
+                  <div className="flex items-center space-x-2">
+                    <span>{item.label}</span>
+                    {isDisabled && (
+                      <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-0.5 rounded-full">
+                        {item.badge}
+                      </span>
+                    )}
+                  </div>
+                </button>
+              )
+            })}
 
             {/* Separator */}
             <div className="border-t border-gray-200 my-4"></div>
@@ -129,12 +156,7 @@ export default function Sidebar() {
             </button>
           </nav>
 
-          {/* Footer - Optional user info or logout */}
-          <div className="p-4 border-t border-gray-200 lg:hidden">
-            <div className="text-xs text-gray-500 text-center">
-              DealCar Mini v1.0
-            </div>
-          </div>
+          
         </div>
       </div>
     </>
