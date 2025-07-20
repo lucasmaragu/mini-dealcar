@@ -192,8 +192,8 @@ export default function CarDetailsPage() {
                   </button>
                 </div>
                 <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4">
-                  <Badge className="bg-black/50 text-white text-xs">
-                    <Camera className="w-3 h-3 mr-1" />
+                  <Badge className="bg-black/50 text-gray-600 text-xs">
+                    <Camera className="w-3 h-3 text-gray-600 mr-1" />
                     {selectedImage + 1} / {car.images?.filter(img => img && img.trim() !== '').length || 0}
                   </Badge>
                 </div>

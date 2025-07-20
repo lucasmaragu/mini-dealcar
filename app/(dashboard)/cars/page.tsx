@@ -176,19 +176,25 @@ export default function CarPage() {
       </div>
 
       
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-2">
         <div className="flex items-center space-x-3">
           <h2 className="text-2xl font-bold text-brand-navy">Vehículos</h2>
           <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-brand-navy text-white">
-            {filtered.length} {filtered.length === 1 ? 'resultado' : 'resultados'}
+        {filtered.length} {filtered.length === 1 ? 'resultado' : 'resultados'}
           </span>
         </div>
         {filtered.length > 0 && (
-          <div className="text-sm text-gray-500">
-            Mostrando {filtered.length} de {cars.length} vehículos
+          <div className="text-sm text-gray-500 sm:block hidden">
+        Mostrando {filtered.length} de {cars.length} vehículos
           </div>
         )}
       </div>
+      {/* Para pantallas pequeñas, mostrar debajo */}
+      {filtered.length > 0 && (
+        <div className="text-sm text-gray-500 sm:hidden mb-4">
+          Mostrando {filtered.length} de {cars.length} vehículos
+        </div>
+      )}
 
       {/* Cars List */}
       <div className="space-y-4">
