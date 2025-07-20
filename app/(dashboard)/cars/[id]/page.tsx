@@ -33,7 +33,7 @@ import {
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
-import { useCars  } from "@/hooks/useCars"
+import { useCars  } from "@/contexts/CarsContext"
 import { Car as CarType } from "@/lib/types"
 
 export default function CarDetailsPage() {

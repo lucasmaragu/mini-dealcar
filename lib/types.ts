@@ -101,3 +101,14 @@ export interface Sale {
   commission: number
   paymentMethod: string
 }
+
+export interface CarsContextType {
+  cars: Car[]
+  loading: boolean
+  addCar: (newCarData: any) => Car
+  updateCar: (id: number, updatedData: Partial<Car>) => void
+  deleteCar: (id: number) => void
+  getCarById: (id: number) => Car | undefined
+  clearUserCars: () => boolean
+  refreshCars: () => void
+}

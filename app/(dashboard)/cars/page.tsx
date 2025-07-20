@@ -7,7 +7,7 @@ import Image from "next/image"
 import { Edit, Filter, ChevronDown, SquareArrowOutUpRight } from "lucide-react"
 import SimpleDropdown from "@/components/SimpleDropdown"
 import { Badge, getStatusVariant, getEtiqVariant } from "@/components/ui/badge"
-import { useCars } from "@/hooks/useCars"
+import { useCars } from "@/contexts/CarsContext"
 
 
 const statusOptions = ["Todos", "En preparación", "Disponibles", "Reservados", "Vendidos"]

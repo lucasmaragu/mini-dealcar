@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { ArrowLeft, Save, X, Eye, EyeOff, Check, AlertCircle, Info, Car, Euro, Calendar, Gauge, Hash, Tag, Globe, ImageIcon, Settings, FileText, Building, Plus, Minus, MapPin } from 'lucide-react'
 import { Badge } from "@/components/ui/badge"
-import { useCars } from "@/hooks/useCars"
+import { useCars } from "@/contexts/CarsContext"
 import { FormData } from "@/lib/types"
 
 

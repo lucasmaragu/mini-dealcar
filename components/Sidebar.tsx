@@ -2,7 +2,7 @@
 
 import { Car, LayoutDashboard, Users, Settings, Search, Bell, ChevronDown, Edit, Plus, Menu, X, Trash2, TrendingUp, AlertTriangle } from "lucide-react"
 import { useState } from "react"
-import { useCars } from "@/hooks/useCars"
+import { useCars } from "@/contexts/CarsContext"
 import { useRouter, usePathname } from "next/navigation"
 
 // replace the old list
