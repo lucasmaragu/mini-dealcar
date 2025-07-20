@@ -400,6 +400,7 @@ export default function CarDetailsPage() {
             <div className="bg-white rounded-xl lg:rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
               <div className="text-center mb-4 sm:mb-6">
                 <div className="flex items-center justify-center space-x-2 mb-2">
+                  <Euro className="w-5 h-5 sm:w-6 sm:h-6 text-brand-navy" />
                   <span className="text-2xl sm:text-3xl font-bold text-brand-navy">€{car.price.toLocaleString()}</span>
                 </div>
                 {car.originalPrice && car.originalPrice > car.price && (

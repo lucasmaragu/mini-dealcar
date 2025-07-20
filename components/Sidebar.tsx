@@ -9,9 +9,9 @@ import { Car as CarType } from "@/lib/types"
 
 const sideBarItems = [
   { icon: TrendingUp, label: "Ventas",    href: "/ventas" },
-  { icon: Car,       label: "Coches",      href: "/cars" },
-  { icon: Users,     label: "Clientes", href: "/customers", disabled: true, badge: "Próximamente" },
-  { icon: Settings,  label: "Configuración",  href: "/settings",  disabled: true, badge: "Próximamente" },
+  { icon: Car,       label: "Cars",      href: "/cars" },
+  { icon: Users,     label: "Customers", href: "/customers", disabled: true, badge: "Próximamente" },
+  { icon: Settings,  label: "Settings",  href: "/settings",  disabled: true, badge: "Próximamente" },
 ]
 
 export default function Sidebar() {
@@ -80,12 +80,12 @@ export default function Sidebar() {
         <div className="font-bold text-black h-full flex flex-col">
           
           <div className="p-6 flex items-center justify-between">
-            <div className="flex items-center space-x-2">
+            <button onClick={() => router.push('/')} className="flex cursor-pointer items-center space-x-2">
               <div className="w-8 h-8 bg-brand-navy rounded-lg flex items-center justify-center">
                 <Car className="w-5 h-5 text-white" />
               </div>
               <span className="text-xl font-bold text-brand-navy">DealCar Mini</span>
-            </div>
+            </button>
             
            
             <button
@@ -199,7 +199,7 @@ export default function Sidebar() {
                     </p>
                     <p className="text-sm text-red-700 mt-1">
                       Una vez eliminados, no podrás recuperar estos vehículos. 
-                    
+                      Asegúrate de tener copias de seguridad si las necesitas.
                     </p>
                   </div>
                 </div>
