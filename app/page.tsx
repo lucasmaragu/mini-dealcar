@@ -19,13 +19,8 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-white font-body overflow-hidden">
-      {/* Skip Link for Accessibility */}
-      <a
-        href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary-900 text-white px-4 py-2 rounded-md z-50"
-      >
-        Saltar al contenido principal
-      </a>
+
+
 
       {/* Header */}
       <header className="absolute top-0 w-full z-40 bg-transparent">
@@ -42,55 +37,11 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
-
-            {/* CTA Button */}
-            <div className="hidden md:block">
-              <button 
-                onClick={() => router.push('/cars')}
-                className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-lg text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transform hover:scale-105"
-              >
-                Acceder
-              </button>
-            </div>
-
-            {/* Mobile menu button */}
-            <div className="md:hidden">
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="text-neutral-600 hover:text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-md p-2"
-                aria-expanded={isMenuOpen}
-                aria-label="Abrir menú de navegación"
-              >
-                {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-              </button>
-            </div>
           </div>
-
-          {/* Mobile Navigation */}
-          {isMenuOpen && (
-            <div className="md:hidden bg-white/95 backdrop-blur-md border border-neutral-200 rounded-lg mt-2 shadow-lg">
-              <div className="px-2 pt-2 pb-3 space-y-1">
-                {["Inicio", "Vehículos", "Servicios", "Contacto"].map((item) => (
-                  <button
-                    key={item}
-                    className="text-neutral-600 hover:text-primary-600 block px-3 py-2 text-base font-medium w-full text-left transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-md"
-                  >
-                    {item}
-                  </button>
-                ))}
-                <button 
-                  onClick={() => router.push('/cars')}
-                  className="w-full mt-4 bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                >
-                  Acceder
-                </button>
-              </div>
-            </div>
-          )}
         </nav>
       </header>
 
-      {/* Main Content - Full Screen Hero */}
+      {/* Main Content*/}
       <main id="main-content" className="h-full flex items-center">
         {/* Hero Section */}
         <section className="relative w-full h-full flex items-center overflow-hidden" aria-labelledby="hero-heading">
@@ -129,10 +80,7 @@ export default function LandingPage() {
 
                 {/* CTA Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto lg:mx-0">
-                  <button className="group bg-primary-600 hover:bg-primary-700 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transform hover:scale-105 flex items-center justify-center">
-                    Explorar Vehículos
-                    <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                  </button>
+                  
                   <button
                     onClick={() => router.push(`/cars`)}
                     className="group border-2 border-brand-navy text-brand-navy hover:bg-brand-navy hover:text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-navy focus:ring-offset-2 flex items-center justify-center cursor-pointer"
@@ -143,10 +91,10 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Interface Mockup */}
-              <div className="animate-slide-up lg:animate-float flex items-center justify-center order-first lg:order-last">
+         
+              <div className="mt-15 lg:mt-0 animate-slide-up lg:animate-float flex items-center justify-center order-first lg:order-last">
                 <div className="relative max-w-sm sm:max-w-md lg:max-w-lg w-full">
-                  {/* Main Interface Card */}
+               
                   <div className="bg-white rounded-2xl shadow-2xl border border-neutral-200 p-4 sm:p-6 transform rotate-2 hover:rotate-0 transition-transform duration-500">
                     <div className="flex items-center justify-between mb-4 sm:mb-6">
                       <div className="flex items-center space-x-2">
@@ -157,20 +105,20 @@ export default function LandingPage() {
                       <span className="text-xs text-neutral-500 font-mono">dealcar-mini.app</span>
                     </div>
 
-                    {/* Search Interface */}
+              
                     <div className="space-y-3 sm:space-y-4">
                       <div className="relative">
                         <Search className="absolute left-3 top-3 h-4 w-4 sm:h-5 sm:w-5 text-neutral-400" />
                         <input
                           type="text"
                           placeholder="Buscar vehículo..."
-                          className="w-full pl-9 sm:pl-10 pr-4 py-2.5 sm:py-3 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm sm:text-base"
+                          className="w-full pl-9 sm:pl-10 pr-4 py-2.5 sm:py-3 border text-gray-600 border-neutral-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm sm:text-base"
                           readOnly
                         />
                       </div>
 
-                      {/* Filter Pills */}
-                      <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                
+                      <div className="flex text-gray-600 flex-wrap gap-1.5 sm:gap-2">
                         {["Audi", "2020-2023", "< 50k km", "Automático"].map((filter, index) => (
                           <span
                             key={filter}
@@ -182,8 +130,7 @@ export default function LandingPage() {
                         ))}
                       </div>
 
-                      {/* Results Preview */}
-                      <div className="space-y-2 sm:space-y-3 pt-2 sm:pt-4">
+                      <div className="space-y-2 text-gray-400 sm:space-y-3 pt-2 sm:pt-4">
                         {[1, 2, 3].map((item) => (
                           <div key={item} className="flex items-center space-x-2 sm:space-x-3 p-2 sm:p-3 bg-neutral-50 rounded-lg">
                             <div className="w-10 h-6 sm:w-12 sm:h-8 bg-gradient-to-r from-neutral-300 to-neutral-400 rounded"></div>
@@ -200,15 +147,15 @@ export default function LandingPage() {
                     </div>
                   </div>
 
-                  {/* Floating Elements */}
+              
                   <div className="absolute -top-2 sm:-top-4 -right-2 sm:-right-4 bg-accent-500 text-white p-2 sm:p-3 rounded-xl shadow-lg animate-float">
-                    <Shield className="h-4 w-4 sm:h-6 sm:w-6" />
+                    <Shield className="h-4 w-4 sm:h-6 sm:w-6 text-gray-600" />
                   </div>
                   <div
                     className="absolute -bottom-2 sm:-bottom-4 -left-2 sm:-left-4 bg-primary-600 text-white p-2 sm:p-3 rounded-xl shadow-lg animate-float"
                     style={{ animationDelay: "1s" }}
                   >
-                    <Zap className="h-4 w-4 sm:h-6 sm:w-6" />
+                    <Zap className="h-4 w-4 sm:h-6 sm:w-6 text-gray-600" />
                   </div>
                 </div>
               </div>
