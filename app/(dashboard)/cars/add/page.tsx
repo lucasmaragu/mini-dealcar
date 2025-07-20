@@ -71,7 +71,6 @@ export default function AddVehiclePage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [newFeature, setNewFeature] = useState("")
   
-  // Estados para history y maintenance
   const [newHistoryEvent, setNewHistoryEvent] = useState({ date: "", event: "", type: "info" as "info" | "success" | "warning" | "error" })
   const [newMaintenanceRecord, setNewMaintenanceRecord] = useState({ date: "", service: "", cost: "" })
 
@@ -115,7 +114,6 @@ export default function AddVehiclePage() {
     }))
   }
 
-  // Funciones para manejar history
   const handleAddHistoryEvent = () => {
     if (newHistoryEvent.date && newHistoryEvent.event) {
       setFormData(prev => ({
@@ -133,7 +131,6 @@ export default function AddVehiclePage() {
     }))
   }
 
-  // Funciones para manejar maintenance
   const handleAddMaintenanceRecord = () => {
     if (newMaintenanceRecord.date && newMaintenanceRecord.service && newMaintenanceRecord.cost) {
       setFormData(prev => ({
@@ -165,7 +162,6 @@ export default function AddVehiclePage() {
       if (!formData.kms.trim()) newErrors.kms = "Los kilómetros son obligatorios"
       if (!formData.plate.trim()) newErrors.plate = "La matrícula es obligatoria"
       
-      // Validate numeric fields
       if (formData.year && (isNaN(Number(formData.year)) || Number(formData.year) < 1900 || Number(formData.year) > new Date().getFullYear() + 1)) {
         newErrors.year = "Año inválido"
       }
@@ -206,7 +202,6 @@ export default function AddVehiclePage() {
   const validateAllSteps = () => {
     const newErrors: Record<string, string> = {}
     
-    // Step 1 - Información básica
     if (!formData.vehicle.trim()) newErrors.vehicle = "El nombre del vehículo es obligatorio"
     if (!formData.brand.trim()) newErrors.brand = "La marca es obligatoria"
     if (!formData.year.trim()) newErrors.year = "El año es obligatorio"
@@ -214,7 +209,6 @@ export default function AddVehiclePage() {
     if (!formData.kms.trim()) newErrors.kms = "Los kilómetros son obligatorios"
     if (!formData.plate.trim()) newErrors.plate = "La matrícula es obligatoria"
     
-    // Validate numeric fields
     if (formData.year && (isNaN(Number(formData.year)) || Number(formData.year) < 1900 || Number(formData.year) > new Date().getFullYear() + 1)) {
       newErrors.year = "Año inválido"
     }
@@ -225,15 +219,12 @@ export default function AddVehiclePage() {
       newErrors.kms = "Kilómetros inválidos"
     }
 
-    // Step 2 - Especificaciones técnicas
     if (!formData.fuel.trim()) newErrors.fuel = "El tipo de combustible es obligatorio"
     if (!formData.transmission.trim()) newErrors.transmission = "La transmisión es obligatoria"
     if (!formData.color.trim()) newErrors.color = "El color es obligatorio"
 
-    // Step 4 - Descripción
     if (!formData.description.trim()) newErrors.description = "La descripción es obligatoria"
 
-    // Step 6 - Concesionario (validado solo al final)
     if (!formData.dealer.trim()) newErrors.dealer = "El nombre del concesionario es obligatorio"
     if (!formData.location.trim()) newErrors.location = "La ubicación es obligatoria"
     
@@ -241,11 +232,9 @@ export default function AddVehiclePage() {
     return Object.keys(newErrors).length === 0
   }
 
-  // Función para prevenir submit accidental en inputs
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && currentStep !== 7) {
       e.preventDefault()
-      // En lugar de submit, avanzar al siguiente paso si es válido
       if (currentStep < 7 && validateStep(currentStep)) {
         setCurrentStep(prev => Math.min(prev + 1, 7))
       }
@@ -266,7 +255,6 @@ export default function AddVehiclePage() {
     setCurrentStep(prev => Math.max(prev - 1, 1))
   }
 
-  // Función para validar sin mutar el estado (sin setErrors)
   const isStepValid = (step: number) => {
     if (step === 1) {
       return formData.vehicle.trim() !== "" && 
@@ -301,15 +289,11 @@ export default function AddVehiclePage() {
     return true
   }
 
-  // Función para determinar si un paso es accesible
   const isStepAccessible = (stepId: number) => {
-    // Siempre se puede ir a pasos anteriores
     if (stepId < currentStep) return true
     
-    // Se puede ir al paso actual
     if (stepId === currentStep) return true
     
-    // Solo se puede ir al siguiente paso si el actual es válido
     if (stepId === currentStep + 1) {
       return isStepValid(currentStep)
     }
@@ -317,7 +301,6 @@ export default function AddVehiclePage() {
     return false
   }
 
-  // Función mejorada para navegar a un paso específico
   const navigateToStep = (stepId: number) => {
     if (isStepAccessible(stepId)) {
       setCurrentStep(stepId)
@@ -325,22 +308,18 @@ export default function AddVehiclePage() {
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log("🔴 handleSubmit ejecutado - currentStep:", currentStep)
+    console.log(" handleSubmit ejecutado - currentStep:", currentStep)
     e.preventDefault()
     e.stopPropagation()
     
-    // Solo permitir submit en el paso 7
     if (currentStep !== 7) {
-      console.log(`🚫 Submit bloqueado: actualmente en paso ${currentStep}, debe estar en paso 7`)
-      alert(`Debug: Submit bloqueado en paso ${currentStep}. Debe estar en paso 7.`)
+      
       return false
     }
     
     console.log("✅ Submit permitido en paso 7")
     
-    // Validar que todos los campos obligatorios estén completos
     if (!validateAllSteps()) {
-      // Encontrar el primer paso con errores y navegar a él
       if (errors.vehicle || errors.brand || errors.year || errors.price || errors.kms || errors.plate) {
         setCurrentStep(1)
       } else if (errors.fuel || errors.transmission || errors.color) {
@@ -356,13 +335,11 @@ export default function AddVehiclePage() {
     setIsSubmitting(true)
     
     try {
-      // Filtrar portales con URLs válidas
       const validPortalUrls = Object.fromEntries(
         Object.entries(formData.portalUrls).filter(([key, url]) => url.trim() !== '')
       )
       const portals = Object.keys(validPortalUrls)
 
-      // Crear el objeto del vehículo con la nueva estructura
       const newCar = {
         id: Date.now().toString(),
         vehicle: formData.vehicle,
@@ -402,15 +379,11 @@ export default function AddVehiclePage() {
         maintenance: formData.maintenance
       }
       
-      // Guardar el vehículo usando el hook
       await addCar(newCar)
       
-      // Mostrar éxito y redirigir
-      alert("Vehículo añadido correctamente!")
       router.push("/cars")
     } catch (error) {
       console.error("Error saving vehicle:", error)
-      alert("Error al guardar el vehículo. Por favor, inténtalo de nuevo.")
     } finally {
       setIsSubmitting(false)
     }

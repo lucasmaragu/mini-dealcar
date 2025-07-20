@@ -45,7 +45,8 @@ const getVariantClasses = (variant: BadgeVariant): string => {
       return "bg-purple-100 text-purple-800 hover:bg-purple-200"
     case "orange":
       return "bg-orange-100 text-orange-800 hover:bg-orange-200"
-    // Variantes específicas para etiquetas de vehículos
+    
+      // Variantes específicas para etiquetas de vehículos
     case "etiq0":
       return "bg-blue-100 text-blue-800"
     case "etiqEco":
@@ -54,7 +55,8 @@ const getVariantClasses = (variant: BadgeVariant): string => {
       return "bg-yellow-100 text-yellow-800"
     case "etiqC":
       return "bg-orange-100 text-orange-800"
-    // Variantes específicas para estados de vehículos
+  
+      // Variantes estados de vehículos
     case "available":
       return "bg-green-100 text-green-800 hover:bg-green-200"
     case "preparation":
@@ -101,7 +103,6 @@ function Badge({
   )
 }
 
-// Función helper para obtener la variante basada en el estado del vehículo
 export const getStatusVariant = (status: string): BadgeVariant => {
   switch (status) {
     case "Disponibles":
@@ -117,7 +118,6 @@ export const getStatusVariant = (status: string): BadgeVariant => {
   }
 }
 
-// Función helper para obtener la variante basada en la etiqueta del vehículo
 export const getEtiqVariant = (etiq: string): BadgeVariant => {
   switch (etiq) {
     case "0":

@@ -10,20 +10,17 @@ export function useCarsLogic() {
   const [cars, setCars] = useState<Car[]>([])
   const [loading, setLoading] = useState(true)
 
-  // Función para cargar cars
   const loadCars = () => {
     try {
-      // Obtener vehículos del localStorage
       const savedCars = localStorage.getItem(STORAGE_KEY)
       const localCars = savedCars ? JSON.parse(savedCars) : []
       
-      // Combinar con datos existentes de data.ts
       const allCars = [...(carsData as Car[]), ...localCars]
       
       setCars(allCars)
     } catch (error) {
       console.error("Error loading cars from localStorage:", error)
-      setCars(carsData as Car[]) // Fallback a datos originales
+      setCars(carsData as Car[]) 
     } finally {
       setLoading(false)
     }
@@ -42,7 +39,7 @@ export function useCarsLogic() {
   // Función para añadir un nuevo vehículo
   const addCar = (newCarData: any) => {
     try {
-      // Generar ID único (mayor que los existentes)
+      
       const maxId = Math.max(...cars.map(car => car.id), 0)
       const id = maxId + 1
       
@@ -85,17 +82,16 @@ export function useCarsLogic() {
         maintenance: newCarData.maintenance || []
       }
 
-      // Obtener vehículos actuales del localStorage
+     
       const savedCars = localStorage.getItem(STORAGE_KEY)
       const localCars = savedCars ? JSON.parse(savedCars) : []
       
-      // Añadir el nuevo vehículo
+     
       const updatedLocalCars = [...localCars, newCar]
       
-      // Guardar en localStorage
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedLocalCars))
       
-      // Actualizar estado
+     
       setCars(prev => [...prev, newCar])
       
       console.log(newCar)
@@ -109,7 +105,6 @@ export function useCarsLogic() {
   // Función para actualizar un vehículo
   const updateCar = (id: number, updatedData: Partial<Car>) => {
     try {
-      // Verificar si es un vehículo del localStorage (ID mayor que los originales)
       const maxOriginalId = Math.max(...(carsData as Car[]).map(car => car.id))
       
       if (id > maxOriginalId) {
@@ -138,7 +133,6 @@ export function useCarsLogic() {
   // Función para eliminar un vehículo
   const deleteCar = (id: number) => {
     try {
-      // Solo permitir eliminar vehículos del localStorage
       const maxOriginalId = Math.max(...(carsData as Car[]).map(car => car.id))
       
       if (id > maxOriginalId) {
@@ -149,7 +143,6 @@ export function useCarsLogic() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedLocalCars))
       }
       
-      // Actualizar estado
       setCars(prev => prev.filter(car => car.id !== id))
     } catch (error) {
       console.error("Error deleting car:", error)
@@ -165,10 +158,8 @@ export function useCarsLogic() {
   // Función para limpiar todos los vehículos del localStorage
   const clearUserCars = () => {
     try {
-      // Eliminar todos los vehículos del localStorage
       localStorage.removeItem(STORAGE_KEY)
       
-      // Actualizar estado solo con los vehículos originales
       setCars(carsData as Car[])
       
       return true
@@ -192,7 +183,5 @@ export function useCarsLogic() {
 
 // Hook principal que usan los componentes cuando NO están dentro del Provider
 export function useCars() {
-  // Fallback que ejecuta la lógica directamente
-  // En la práctica, los componentes dentro del dashboard siempre tendrán el Provider
   return useCarsLogic()
 }

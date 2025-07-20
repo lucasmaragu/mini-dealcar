@@ -37,7 +37,6 @@ export default function SalesClient({ salesData }: SalesClientProps) {
   const applyFilters = (searchQuery: string, status: string, payment: string) => {
     let result = salesData
 
-    // Filter by search query
     if (searchQuery) {
       const lower = searchQuery.toLowerCase()
       result = result.filter(
@@ -48,12 +47,10 @@ export default function SalesClient({ salesData }: SalesClientProps) {
       )
     }
 
-    // Filter by status
     if (status !== "Todos") {
       result = result.filter((sale) => sale.status === status)
     }
 
-    // Filter by payment method
     if (payment !== "Todos") {
       result = result.filter((sale) => sale.paymentMethod === payment)
     }

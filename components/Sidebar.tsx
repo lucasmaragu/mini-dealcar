@@ -4,8 +4,9 @@ import { Car, LayoutDashboard, Users, Settings, Search, Bell, ChevronDown, Edit,
 import { useState } from "react"
 import { useCars } from "@/contexts/CarsContext"
 import { useRouter, usePathname } from "next/navigation"
+import { Car as CarType } from "@/lib/types"
 
-// replace the old list
+
 const sideBarItems = [
   { icon: TrendingUp, label: "Ventas",    href: "/ventas" },
   { icon: Car,       label: "Cars",      href: "/cars" },
@@ -22,15 +23,12 @@ export default function Sidebar() {
   const router = useRouter() 
   const pathname = usePathname()
 
-  const userCarsCount = cars.filter(car => car.id > 6).length 
+  const userCarsCount = cars.filter((car: CarType) => car.id > 6).length 
 
   const handleClearUserCars = async () => {
     if (userCarsCount === 0) {
-      alert("No hay vehículos de usuario para eliminar.")
       return
     }
-
-    // Mostrar el modal de confirmación
     setShowDeleteModal(true)
   }
 
@@ -40,10 +38,8 @@ export default function Sidebar() {
     
     try {
       await clearUserCars()
-      alert("Todos los vehículos de usuario han sido eliminados correctamente.")
       setIsOpen(false) 
     } catch (error) {
-      alert("Error al eliminar los vehículos. Por favor, inténtalo de nuevo.")
       console.error("Error clearing user cars:", error)
     } finally {
       setIsClearing(false)
@@ -66,7 +62,7 @@ export default function Sidebar() {
         </button>
       </div>
 
-      {/* Backdrop for mobile */}
+    
       {isOpen && (
         <div
           className="lg:hidden fixed inset-0 bg-black/50 z-40"
@@ -82,7 +78,7 @@ export default function Sidebar() {
         w-64 lg:w-auto
       `}>
         <div className="font-bold text-black h-full flex flex-col">
-          {/* Header with close button on mobile */}
+          
           <div className="p-6 flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-brand-navy rounded-lg flex items-center justify-center">
@@ -91,7 +87,7 @@ export default function Sidebar() {
               <span className="text-xl font-bold text-brand-navy">DealCar Mini</span>
             </div>
             
-            {/* Close button - only visible on mobile */}
+           
             <button
               onClick={() => setIsOpen(false)}
               className="lg:hidden cursor-pointer p-1 hover:bg-gray-100 rounded-md transition-colors"
@@ -100,7 +96,7 @@ export default function Sidebar() {
             </button>
           </div>
 
-          {/* Navigation */}
+          
           <nav className="px-4 space-y-2 flex-1">
             {sideBarItems.map((item) => {
               const active = pathname === item.href
@@ -138,10 +134,10 @@ export default function Sidebar() {
               )
             })}
 
-            {/* Separator */}
+            
             <div className="border-t border-gray-200 my-4"></div>
 
-            {/* Clear User Cars Button */}
+          
             <button
               onClick={handleClearUserCars}
               disabled={isClearing || userCarsCount === 0}
@@ -172,7 +168,7 @@ export default function Sidebar() {
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-xl max-w-md w-full mx-4 overflow-hidden">
-            {/* Modal Header */}
+           
             <div className="flex items-center space-x-4 p-6 border-b border-gray-200">
               <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
                 <AlertTriangle className="w-6 h-6 text-red-600" />
@@ -187,7 +183,7 @@ export default function Sidebar() {
               </div>
             </div>
 
-            {/* Modal Content */}
+            
             <div className="p-6">
               <p className="text-gray-700 mb-4">
                 ¿Estás seguro de que quieres eliminar todos los{" "}
@@ -210,7 +206,7 @@ export default function Sidebar() {
               </div>
             </div>
 
-            {/* Modal Footer */}
+            
             <div className="flex items-center justify-end space-x-3 p-6 bg-gray-50 border-t border-gray-200">
               <button
                 onClick={cancelDelete}

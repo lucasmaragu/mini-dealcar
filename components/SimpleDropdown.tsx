@@ -1,19 +1,13 @@
 import { useState, useRef, useEffect } from "react"
 import { ChevronDown, Check } from "lucide-react"
+import { SimpleDropdownProps } from "@/lib/types"
 
-interface SimpleDropdownProps {
-  label: string
-  options: string[]
-  selected: string
-  onSelect: (option: string) => void
-  placeholder?: string
-}
 
 export default function SimpleDropdown({ label, options, selected, onSelect, placeholder }: SimpleDropdownProps) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
-  // Cerrar dropdown al hacer click fuera
+ 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (ref.current && !ref.current.contains(event.target as Node)) {

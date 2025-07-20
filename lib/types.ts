@@ -112,3 +112,11 @@ export interface CarsContextType {
   clearUserCars: () => boolean
   refreshCars: () => void
 }
+
+export interface SimpleDropdownProps {
+  label: string
+  options: string[]
+  selected: string
+  onSelect: (option: string) => void
+  placeholder?: string
+}

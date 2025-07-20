@@ -33,7 +33,7 @@ import {
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
-import { useCars  } from "@/contexts/CarsContext"
+import { useCars  } from "@/hooks/useCars"
 import { Car as CarType } from "@/lib/types"
 
 export default function CarDetailsPage() {
@@ -169,9 +169,9 @@ export default function CarDetailsPage() {
 
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-          {/* Main Content */}
+          {/* Main Contennt */}
           <div className="xl:col-span-2 space-y-4 sm:space-y-6 lg:space-y-8">
-            {/* Image Gallery */}
+            {/* Image  Gallery */}
             <div className="bg-white rounded-xl lg:rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
               <div className="relative">
                 <Image
@@ -248,7 +248,7 @@ export default function CarDetailsPage() {
               </div>
 
               <div className="p-3 sm:p-4 lg:p-6">
-                {/* Overview Tab */}
+                {/* Overview */}
                 {activeTab === "overview" && (
                   <div className="space-y-4 sm:space-y-6">
                     <div>

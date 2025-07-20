@@ -8,6 +8,7 @@ import { Edit, Filter, ChevronDown, SquareArrowOutUpRight } from "lucide-react"
 import SimpleDropdown from "@/components/SimpleDropdown"
 import { Badge, getStatusVariant, getEtiqVariant } from "@/components/ui/badge"
 import { useCars } from "@/contexts/CarsContext"
+import { Car } from "@/lib/types"
 
 
 const statusOptions = ["Todos", "En preparación", "Disponibles", "Reservados", "Vendidos"]
@@ -22,7 +23,6 @@ export default function CarPage() {
   const [brandFilter, setBrandFilter] = useState("Todas")
   const [etiqFilter, setEtiqFilter] = useState("Todas")
 
-  // Actualizar filtered cuando cars cambie
   useEffect(() => {
     setFiltered(cars)
   }, [cars])
@@ -34,27 +34,23 @@ export default function CarPage() {
   const applyFilters = (searchQuery: string, status: string, brand: string, etiq: string) => {
     let result = cars
 
-    // Filter by search query
     if (searchQuery) {
       const lower = searchQuery.toLowerCase()
       result = result.filter(
-        (car) => car.vehicle.toLowerCase().includes(lower) || car.plate.toLowerCase().includes(lower),
+        (car: Car) => car.vehicle.toLowerCase().includes(lower) || car.plate.toLowerCase().includes(lower),
       )
     }
 
-    // Filter by status
     if (status !== "Todos") {
-      result = result.filter((car) => car.status === status)
+      result = result.filter((car: Car) => car.status === status)
     }
 
-    // Filter by brand
     if (brand !== "Todas") {
-      result = result.filter((car) => car.brand === brand)
+      result = result.filter((car: Car) => car.brand === brand)
     }
 
-    // Filter by etiq
     if (etiq !== "Todas") {
-      result = result.filter((car) => car.etiq === etiq)
+      result = result.filter((car: Car) => car.etiq === etiq)
     }
 
     setFiltered(result)
@@ -138,7 +134,7 @@ export default function CarPage() {
           onSelect={handleEtiqFilter}
         />
 
-        {/* Clear Filters Button */}
+       
         {(statusFilter !== "Todos" || brandFilter !== "Todas" || etiqFilter !== "Todas") && (
           <button
             onClick={() => {
@@ -155,7 +151,6 @@ export default function CarPage() {
           </div>
         </div>
 
-        {/* Active Filters Summary - Only show if filters are active */}
         {(statusFilter !== "Todos" || brandFilter !== "Todas" || etiqFilter !== "Todas") && (
           <div className="mt-3 pt-3 border-t border-gray-100">
         <div className="flex flex-wrap items-center gap-2">
@@ -180,7 +175,7 @@ export default function CarPage() {
         )}
       </div>
 
-      {/* Results count */}
+      
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-3">
           <h2 className="text-2xl font-bold text-brand-navy">Vehículos</h2>
@@ -195,12 +190,12 @@ export default function CarPage() {
         )}
       </div>
 
-      {/* Cars List - Responsive Cards */}
+      {/* Cars List */}
       <div className="space-y-4">
-        {filtered.map((car) => (
+        {filtered.map((car: Car) => (
           <div key={car.id} className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow car-card group">
             <div className="flex flex-col md:flex-row md:items-center car-card-content">
-              {/* Car Image with Overlay Button */}
+      
               <div className="flex-shrink-0 relative mx-auto md:mx-0 w-full md:w-48">
                 <Image
                   src={car.image || "/placeholder.svg"}
@@ -209,7 +204,7 @@ export default function CarPage() {
                   height={128}
                   className="w-full h-48 md:h-32 object-cover rounded-xl bg-gray-100"
                 />
-                {/* Overlay Button */}
+                
                 <div className="absolute inset-0 bg-black/40 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                   <button 
                     onClick={() => router.push(`/cars/${car.id}`)}
@@ -234,7 +229,7 @@ export default function CarPage() {
                   </div>
                 </div>
 
-                {/* Column 2 */}
+                
                 <div className="space-y-3">
                   <div>
                     <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Año</span>
@@ -246,7 +241,7 @@ export default function CarPage() {
                   </div>
                 </div>
 
-                {/* Column 3 - Hidden on mobile, visible on md+ */}
+                
                 <div className="space-y-3 hidden md:block">
                   <div>
                     <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Matrícula</span>
@@ -258,7 +253,7 @@ export default function CarPage() {
                   </div>
                 </div>
 
-                {/* Column 4 - Hidden on mobile, visible on md+ */}
+                
                 <div className="space-y-3 hidden md:block">
                   <div>
                     <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">ETIQ</span>
@@ -271,7 +266,7 @@ export default function CarPage() {
                   <div>
                     <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Portales</span>
                     <div className="flex flex-wrap gap-1 mt-1">
-                      {car.portals.map((portal, index) => (
+                      {car.portals.map((portal: string, index: number) => (
                         <Badge key={index} variant="secondary" size="sm">
                           {portal}
                         </Badge>
@@ -280,7 +275,6 @@ export default function CarPage() {
                   </div>
                 </div>
 
-                {/* Mobile-only additional info */}
                 <div className="col-span-2 md:hidden">
                   <div className="flex flex-wrap gap-2 items-center">
                     <Badge variant={getStatusVariant(car.status)}>
@@ -295,7 +289,6 @@ export default function CarPage() {
                 </div>
               </div>
 
-              {/* Status Only - Desktop only */}
               <div className="flex-shrink-0 hidden md:flex flex-col items-end">
                 <Badge variant={getStatusVariant(car.status)}>
                   {car.status}
@@ -306,7 +299,6 @@ export default function CarPage() {
         ))}
       </div>
 
-      {/* No results */}
       {filtered.length === 0 && (
         <div className="text-center py-12">
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
