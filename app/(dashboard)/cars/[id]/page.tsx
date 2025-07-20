@@ -158,7 +158,7 @@ export default function CarDetailsPage() {
               <button  className="text-gray-500 hover:text-gray-700">
                 <Share2 className="w-5 h-5" />
               </button>
-              <button className="bg-brand-navy flex rounded-lg px-3 py-2 hover:bg-brand-navy/90">
+              <button className="bg-brand-navy text-gray-200 hover:text-gray-800 hover:bg-white border cursor-pointer transition-all flex rounded-lg px-3 py-2 hover:bg-brand-navy/90">
                 <Edit className="w-4 h-4 mr-2 mt-1" />
                 Editar
               </button>
@@ -429,7 +429,7 @@ export default function CarDetailsPage() {
               </div>
 
               <div className="space-y-3">
-                <button className="w-full flex justify-center cursor-pointer py-2 rounded-xl bg-brand-navy hover:bg-brand-navy/90">
+                <button className="w-full flex text-gray-200 hover:text-gray-600 hover:bg-white justify-center cursor-pointer border transition-all py-2 rounded-xl bg-brand-navy hover:bg-brand-navy/90">
                   <Phone className="w-4 h-4 mt-1 mr-2" />
                   Contactar
                 </button>

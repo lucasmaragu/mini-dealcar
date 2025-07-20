@@ -131,8 +131,8 @@ export default function LandingPage() {
                   </button>
                   <button
                     onClick={() => router.push(`/cars`)}
-                  className=" border-2 border-white hover:border-neutral-300 hover:border-primary-600 bg-brand-navy hover:bg-white hover:text-neutral-700 hover:text-primary-600 px-8 py-4 rounded-xl text-lg font-medium transition-all duration-200  flex items-center justify-center cursor-pointer">
-                    <Play className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
+                  className=" border-2 text-gray-200 border-white hover:border-neutral-300 hover:border-primary-600 bg-brand-navy hover:bg-white hover:text-neutral-700 hover:text-primary-600 px-8 py-4 rounded-xl text-lg font-medium transition-all duration-200  flex items-center justify-center cursor-pointer">
+                    <Play className="mr-2 h-5 w-5 group-hover:scale-110   transition-transform" />
                     Ver Demo
                   </button>
                 </div>
