@@ -33,6 +33,21 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Hide scrollbars while keeping functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
+}
+
+/* Smooth scrolling for better UX */
+html {
+  scroll-behavior: smooth;
+}
+
 /* Ensure consistent card spacing in production */
 .car-card {
   padding: 1.5rem !important;

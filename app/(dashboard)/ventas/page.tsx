@@ -77,7 +77,7 @@ export default async function SalesPage() {
   return (
     <div className="p-4">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+      <div className="flex ml-15 lg:ml-0 flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Gestión de Ventas</h1>
           <p className="text-gray-600">Controla todas las compraventas de la aplicación</p>

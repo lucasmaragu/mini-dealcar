@@ -87,7 +87,14 @@ export default function CarPage() {
   }
 
   return (
-    <div className="p-6 lg:p-6 pt-16 lg:pt-6 bg-brand-light min-h-screen">
+    <div>
+      <div className="flex ml-20 lg:ml-6  mt-2 lg:mt-5  flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+       <div>
+         <h1 className="text-2xl font-bold text-gray-900 mb-2">Vehículos en Venta</h1>
+         <p className="text-gray-600">Consulta y gestiona todos los coches disponibles en la plataforma</p>
+       </div>
+          </div>
+    <div className="p-6 lg:p-6  lg:pt-6  min-h-screen">
       
       <div className="sm:flex sm:justify-between space-y-5 sm:space-y-0 items-center mb-6">
         <div className="flex items-center space-x-4">
@@ -309,6 +316,7 @@ export default function CarPage() {
           <p className="text-gray-500">Intenta ajustar los filtros de búsqueda</p>
         </div>
       )}
+    </div>
     </div>
   )
 }
