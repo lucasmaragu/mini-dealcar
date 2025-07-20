@@ -9,9 +9,9 @@ import { Car as CarType } from "@/lib/types"
 
 const sideBarItems = [
   { icon: TrendingUp, label: "Ventas",    href: "/ventas" },
-  { icon: Car,       label: "Cars",      href: "/cars" },
-  { icon: Users,     label: "Customers", href: "/customers", disabled: true, badge: "Próximamente" },
-  { icon: Settings,  label: "Settings",  href: "/settings",  disabled: true, badge: "Próximamente" },
+  { icon: Car,       label: "Coches",      href: "/cars" },
+  { icon: Users,     label: "Clientes", href: "/customers", disabled: true, badge: "Próximamente" },
+  { icon: Settings,  label: "Configuración",  href: "/settings",  disabled: true, badge: "Próximamente" },
 ]
 
 export default function Sidebar() {

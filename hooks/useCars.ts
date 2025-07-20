@@ -31,7 +31,7 @@ export function useCarsLogic() {
     loadCars()
   }, [])
 
-  // Función para refrescar los cars (útil para forzar actualización)
+  // Función para refrescar los cars 
   const refreshCars = () => {
     loadCars()
   }
