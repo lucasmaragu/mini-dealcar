@@ -207,8 +207,8 @@ mini-dealcar/
 ## 👨‍💻 Desarrollado por
 
 **Lucas Martínez**
-- 🌐 [Portfolio](https://tu-portfolio.com)
-- 💼 [LinkedIn](https://linkedin.com/in/tu-perfil)
+- 🌐 [Portfolio](https://https://lucasmaragu.vercel.app/)
+- 💼 [LinkedIn](https://www.linkedin.com/in/lucasmartinezaguilera/)
 - 🐙 [GitHub](https://github.com/lucasmaragu)
 
 ---
